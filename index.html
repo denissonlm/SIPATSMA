@@ -2080,9 +2080,13 @@ function toggleActionsView(btn){
   showActionsInViews = !showActionsInViews;
   document.querySelectorAll('.view-actions-toggle').forEach(b=>{
     b.classList.toggle('active', showActionsInViews);
-    b.querySelector('svg + *') ? null : null;
-    const textNode = [...b.childNodes].find(n=>n.nodeType===3);
-    if(textNode) textNode.textContent = showActionsInViews ? ' Ocultar ações' : ' Ações';
+    const label = showActionsInViews ? ' Ocultar ações' : ' Ações';
+    // Update only the text node, preserving the SVG
+    for (let node of b.childNodes) {
+      if (node.nodeType === 3 && node.textContent.trim().length > 1) {
+        node.textContent = label;
+      }
+    }
   });
   renderAll();
 }
