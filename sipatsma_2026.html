@@ -1,0 +1,2969 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIPATSMA 2026 — Grupo Açotubo</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{
+  --red:#c0392b;
+  --red-dark:#8b1e15;
+  --red-light:#e74c3c;
+  --black:#111;
+  --gray-900:#1a1a1a;
+  --gray-800:#2c2c2c;
+  --gray-700:#444;
+  --gray-600:#666;
+  --gray-500:#888;
+  --gray-400:#aaa;
+  --gray-300:#ccc;
+  --gray-200:#e5e5e5;
+  --gray-100:#f2f2f2;
+  --gray-50:#f8f8f8;
+  --white:#fff;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05);
+  --shadow:0 2px 8px rgba(0,0,0,.08);
+  --shadow-lg:0 8px 24px rgba(0,0,0,.12);
+  --radius:6px;
+  --radius-lg:10px;
+  --transition:.2s ease;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,sans-serif;
+  background:var(--white);
+  color:var(--black);
+  font-size:14px;
+  line-height:1.5;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+}
+
+button,input,select,textarea{font-family:inherit;font-size:inherit}
+
+/* ====== HEADER ====== */
+header.app-header{
+  background:var(--white);
+  border-bottom:3px solid var(--red);
+  padding:20px 32px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  flex-shrink:0;
+}
+.brand{display:flex;align-items:center;gap:16px}
+.brand-icon{
+  width:56px;height:56px;
+  background:var(--red);
+  border-radius:var(--radius);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  animation:scaleIn .5s ease;
+}
+.brand-icon svg{width:32px;height:32px;color:#fff}
+.brand-text h1{
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:.5px;
+  color:var(--black);
+  animation:fadeUp .5s ease;
+}
+.brand-text .subtitle{
+  font-size:12px;
+  color:var(--gray-600);
+  margin-top:2px;
+  animation:fadeUp .5s ease .1s both;
+}
+.brand-text .date-range{
+  font-size:12px;
+  color:var(--red);
+  font-weight:600;
+  margin-top:2px;
+  animation:fadeUp .5s ease .2s both;
+}
+.header-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ====== NAV ====== */
+nav.tabs{
+  background:var(--white);
+  border-bottom:1px solid var(--gray-200);
+  padding:0 32px;
+  display:flex;
+  gap:4px;
+  overflow-x:auto;
+  flex-shrink:0;
+  scrollbar-width:thin;
+}
+nav.tabs::-webkit-scrollbar{height:4px}
+nav.tabs::-webkit-scrollbar-thumb{background:var(--gray-300)}
+nav.tabs button{
+  background:none;
+  border:none;
+  padding:14px 16px;
+  font-size:13px;
+  font-weight:500;
+  color:var(--gray-600);
+  cursor:pointer;
+  border-bottom:3px solid transparent;
+  transition:var(--transition);
+  white-space:nowrap;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+nav.tabs button:hover{color:var(--black);background:var(--gray-50)}
+nav.tabs button.active{color:var(--black);border-bottom-color:var(--red);font-weight:600}
+nav.tabs button svg{width:16px;height:16px}
+
+/* ====== MAIN ====== */
+main{flex:1;padding:24px 32px 80px;overflow-y:auto;background:var(--gray-50)}
+.view{display:none;animation:fadeUp .3s ease}
+.view.active{display:block}
+.view-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+  gap:12px;
+}
+.view-title{font-size:20px;font-weight:700}
+.view-subtitle{font-size:13px;color:var(--gray-600);margin-top:2px}
+
+/* ====== BUTTONS ====== */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 14px;
+  border:1px solid var(--gray-300);
+  background:var(--white);
+  color:var(--black);
+  border-radius:var(--radius);
+  cursor:pointer;
+  font-weight:500;
+  font-size:13px;
+  transition:var(--transition);
+  text-decoration:none;
+}
+.btn:hover{border-color:var(--gray-500);background:var(--gray-50)}
+.btn svg{width:14px;height:14px}
+.btn-primary{background:var(--red);border-color:var(--red);color:var(--white)}
+.btn-primary:hover{background:var(--red-dark);border-color:var(--red-dark)}
+.btn-ghost{border-color:transparent;background:transparent}
+.btn-ghost:hover{background:var(--gray-100)}
+.btn-danger{color:var(--red);border-color:var(--gray-300)}
+.btn-danger:hover{background:#fdf3f1;border-color:var(--red)}
+.btn-sm{padding:4px 8px;font-size:12px}
+.btn-icon{padding:6px;width:30px;height:30px;justify-content:center}
+
+/* ====== CARDS ====== */
+.card{
+  background:var(--white);
+  border:1px solid var(--gray-200);
+  border-radius:var(--radius-lg);
+  padding:20px;
+  box-shadow:var(--shadow-sm);
+  transition:var(--transition);
+}
+.card:hover{box-shadow:var(--shadow)}
+
+/* ====== EMPTY STATE ====== */
+.empty-state{
+  text-align:center;
+  padding:60px 20px;
+  background:var(--white);
+  border:2px dashed var(--gray-300);
+  border-radius:var(--radius-lg);
+}
+.empty-state svg{width:64px;height:64px;color:var(--gray-400);margin-bottom:16px}
+.empty-state h3{font-size:16px;color:var(--black);margin-bottom:8px}
+.empty-state p{color:var(--gray-600);margin-bottom:20px}
+
+/* ====== FORMS ====== */
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+}
+.form-row{display:flex;flex-direction:column;gap:6px}
+.form-row.span-2{grid-column:span 2}
+.form-row.span-full{grid-column:1/-1}
+label.field-label{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  color:var(--gray-600);
+  font-weight:600;
+}
+label.field-label .required{color:var(--red)}
+input[type=text],input[type=email],input[type=number],input[type=date],input[type=time],select,textarea{
+  padding:8px 10px;
+  border:1px solid var(--gray-300);
+  border-radius:var(--radius);
+  background:var(--white);
+  color:var(--black);
+  transition:var(--transition);
+  width:100%;
+}
+input:focus,select:focus,textarea:focus{
+  outline:none;
+  border-color:var(--red);
+  box-shadow:0 0 0 3px rgba(192,57,43,.1);
+}
+textarea{min-height:80px;resize:vertical;font-family:inherit}
+.form-actions{
+  display:flex;
+  gap:8px;
+  justify-content:flex-end;
+  margin-top:16px;
+  flex-wrap:wrap;
+}
+
+/* ====== AGENDA (cards by day) ====== */
+.day-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:16px;
+}
+.day-column{
+  background:var(--white);
+  border-radius:var(--radius-lg);
+  border:1px solid var(--gray-200);
+  overflow:hidden;
+}
+.day-header{
+  background:var(--black);
+  color:var(--white);
+  padding:12px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.day-header .day-name{font-weight:700;font-size:14px}
+.day-header .day-date{font-size:12px;color:var(--gray-300)}
+.day-header .day-count{
+  background:var(--red);
+  color:#fff;
+  padding:2px 8px;
+  border-radius:99px;
+  font-size:11px;
+  font-weight:600;
+}
+.day-events{padding:12px;display:flex;flex-direction:column;gap:10px;min-height:120px}
+.day-events.empty{
+  display:flex;align-items:center;justify-content:center;
+  color:var(--gray-400);font-size:12px;font-style:italic;
+}
+.event-card{
+  border-left:4px solid var(--gray-400);
+  background:var(--gray-50);
+  padding:10px 12px;
+  border-radius:var(--radius);
+  cursor:pointer;
+  transition:var(--transition);
+}
+.event-card:hover{background:var(--gray-100);transform:translateX(2px)}
+.event-card .ec-time{font-size:11px;color:var(--gray-600);font-weight:600;margin-bottom:4px}
+.event-card .ec-title{font-size:13px;font-weight:600;color:var(--black);margin-bottom:4px;line-height:1.3}
+.event-card .ec-meta{font-size:11px;color:var(--gray-600);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.event-card .ec-meta svg{width:10px;height:10px;vertical-align:middle}
+.event-card.type-abertura,.event-card.type-encerramento,.event-card.type-premiacao{border-left-color:var(--red)}
+.event-card.type-palestra{border-left-color:var(--red-light)}
+.event-card.type-dialogo_seguranca{border-left-color:var(--red-dark)}
+.event-card.type-acao_saude{border-left-color:#d35a4d}
+.event-card.type-workshop{border-left-color:var(--gray-800)}
+.event-card.type-dinamica{border-left-color:var(--gray-600)}
+.event-card.type-ginastica{border-left-color:var(--gray-500)}
+.event-card.type-outro{border-left-color:var(--gray-400)}
+/* ====== AGENDA ====== */
+#agenda-grid.hide-photos .event-photo-banner { display: none !important; }
+.event-photo-banner{
+  width:calc(100% + 24px);
+  height:96px;
+  margin:-10px -12px 10px -12px;
+  background-color:var(--gray-100);
+  background-size:cover;background-position:center;
+  border-radius:var(--radius) var(--radius) 0 0;
+  border-bottom:1px solid var(--gray-200);
+}
+
+/* ====== GANTT ====== */
+.gantt-container{
+  background:var(--white);
+  border:1px solid var(--gray-200);
+  border-radius:var(--radius-lg);
+  padding:16px;
+  overflow-x:auto;
+}
+.gantt-controls{display:flex;gap:12px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.gantt-controls label{font-size:12px;color:var(--gray-600)}
+.gantt{position:relative;min-width:900px}
+.gantt.sequential-mode{min-width:2400px}
+.gantt-header{
+  display:grid;
+  border-bottom:1px solid var(--gray-200);
+  padding-bottom:8px;
+  margin-bottom:8px;
+  font-size:11px;
+  color:var(--gray-600);
+  font-weight:600;
+}
+.gantt-row{
+  display:grid;
+  border-bottom:1px dashed var(--gray-200);
+  align-items:center;
+  position:relative;
+  padding:6px 0;
+  min-height:50px;
+}
+.gantt-row:last-child{border-bottom:none}
+.gantt-label{
+  font-size:12px;
+  font-weight:600;
+  padding-right:12px;
+  color:var(--black);
+  position:sticky;
+  left:0;
+  background:var(--white);
+  z-index:2;
+}
+.gantt-label .gantt-date{display:block;color:var(--gray-500);font-size:10px;font-weight:500}
+.gantt-track{position:relative;height:42px;background:var(--gray-50);border-radius:var(--radius)}
+.gantt-hour{
+  position:absolute;top:0;bottom:0;
+  border-left:1px dashed var(--gray-200);
+  font-size:10px;
+  color:var(--gray-400);
+  padding-left:2px;
+}
+.gantt-hour-label{
+  font-size:10px;
+  color:var(--gray-600);
+  text-align:center;
+}
+.gantt-bar{
+  position:absolute;
+  top:4px;
+  bottom:4px;
+  background:var(--gray-500);
+  border-radius:4px;
+  padding:4px 8px;
+  font-size:11px;
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  transition:var(--transition);
+  box-shadow:var(--shadow-sm);
+}
+.gantt-bar:hover{transform:scale(1.02);box-shadow:var(--shadow);z-index:3}
+.gantt-bar.type-abertura,.gantt-bar.type-encerramento,.gantt-bar.type-premiacao{background:var(--red)}
+.gantt-bar.type-palestra{background:var(--red-light)}
+.gantt-bar.type-dialogo_seguranca{background:var(--red-dark)}
+.gantt-bar.type-acao_saude{background:#d35a4d}
+.gantt-bar.type-workshop{background:var(--gray-800)}
+.gantt-bar.type-dinamica{background:var(--gray-600)}
+.gantt-bar.type-ginastica{background:var(--gray-500)}
+.gantt-bar.type-outro{background:var(--gray-400)}
+
+/* ====== CALENDAR ====== */
+.calendar{
+  background:var(--white);
+  border:1px solid var(--gray-200);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  overflow-x:auto;
+}
+.cal-grid{
+  display:grid;
+  grid-template-columns:60px repeat(5,minmax(140px,1fr));
+  min-width:800px;
+}
+.cal-header-cell{
+  background:var(--black);
+  color:var(--white);
+  padding:10px 8px;
+  text-align:center;
+  font-size:12px;
+  font-weight:600;
+  border-right:1px solid var(--gray-700);
+}
+.cal-header-cell:last-child{border-right:none}
+.cal-time-cell{
+  border-right:1px solid var(--gray-200);
+  border-bottom:1px solid var(--gray-100);
+  padding:4px 6px;
+  font-size:10px;
+  color:var(--gray-500);
+  text-align:right;
+  background:var(--gray-50);
+  height:60px;
+  position:relative;
+}
+.cal-day-cell{
+  border-right:1px solid var(--gray-200);
+  border-bottom:1px solid var(--gray-100);
+  position:relative;
+  height:60px;
+  background:var(--white);
+}
+.cal-day-cell:last-child{border-right:none}
+.cal-event{
+  position:absolute;
+  left:2px;right:2px;
+  background:var(--gray-500);
+  color:#fff;
+  border-radius:4px;
+  padding:3px 6px;
+  font-size:10px;
+  font-weight:600;
+  overflow:hidden;
+  cursor:pointer;
+  box-shadow:var(--shadow-sm);
+  transition:var(--transition);
+  z-index:1;
+}
+.cal-event:hover{transform:scale(1.02);box-shadow:var(--shadow);z-index:3}
+.cal-event.type-abertura,.cal-event.type-encerramento,.cal-event.type-premiacao{background:var(--red)}
+.cal-event.type-palestra{background:var(--red-light)}
+.cal-event.type-dialogo_seguranca{background:var(--red-dark)}
+.cal-event.type-acao_saude{background:#d35a4d}
+.cal-event.type-workshop{background:var(--gray-800)}
+.cal-event.type-dinamica{background:var(--gray-600)}
+.cal-event.type-ginastica{background:var(--gray-500)}
+.cal-event.type-outro{background:var(--gray-400)}
+.cal-event .ce-time{opacity:.85;font-weight:500}
+
+/* ====== TIMELINE ====== */
+.timeline{position:relative;max-width:900px;margin:0 auto;padding:20px 0}
+.timeline::before{
+  content:'';
+  position:absolute;
+  left:50%;
+  top:0;bottom:0;
+  width:2px;
+  background:var(--red);
+  transform:translateX(-50%);
+}
+.timeline-day{
+  text-align:center;
+  margin:24px 0 12px;
+  position:relative;
+  z-index:2;
+}
+.timeline-day span{
+  display:inline-block;
+  background:var(--black);
+  color:#fff;
+  padding:6px 16px;
+  border-radius:99px;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.5px;
+}
+.timeline-item{
+  position:relative;
+  width:50%;
+  padding:10px 30px;
+}
+.timeline-item.left{left:0;text-align:right}
+.timeline-item.right{left:50%}
+.timeline-item::before{
+  content:'';
+  position:absolute;
+  top:24px;
+  width:14px;height:14px;
+  background:var(--red);
+  border:3px solid #fff;
+  border-radius:50%;
+  z-index:2;
+  box-shadow:0 0 0 1px var(--red);
+}
+.timeline-item.left::before{right:-7px}
+.timeline-item.right::before{left:-7px}
+.timeline-card{
+  background:var(--white);
+  border:1px solid var(--gray-200);
+  border-radius:var(--radius);
+  padding:12px 14px;
+  cursor:pointer;
+  transition:var(--transition);
+  box-shadow:var(--shadow-sm);
+}
+.timeline-card:hover{box-shadow:var(--shadow);border-color:var(--gray-400)}
+
+@keyframes slideLine {
+  from { background-position: 0 center; }
+  to { background-position: 200px center; }
+}
+
+/* ====== TIMELINE HORIZONTAL COMPACTA ====== */
+.timeline.layout-horizontal {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding: 180px 20px; /* Muito espaço para abrigar os cartões pulando pra cima e pra baixo */
+  align-items: center; /* Centraliza a "linha" invisível */
+  gap: 0;
+  max-width: none;
+  background-color: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  
+  /* A linha colorida e animada! */
+  background-image: linear-gradient(90deg, var(--red) 0%, #ff8a80 50%, var(--red) 100%);
+  background-size: 200px 4px;
+  background-position: 0 center;
+  background-repeat: repeat-x;
+  animation: slideLine 3s linear infinite;
+
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--red) var(--gray-200);
+}
+.timeline.layout-horizontal::-webkit-scrollbar { height: 8px; }
+.timeline.layout-horizontal::-webkit-scrollbar-thumb { background: var(--red); border-radius: 4px; }
+.timeline.layout-horizontal::-webkit-scrollbar-track { background: var(--gray-100); border-radius: 4px; }
+
+.timeline.layout-horizontal::before { display: none; } /* remove linha vermelha central original */
+
+.timeline.layout-horizontal .timeline-day {
+  flex: 0 0 auto;
+  margin: 0 20px;
+  height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 3;
+}
+.timeline.layout-horizontal .timeline-day span {
+  writing-mode: horizontal-tb;
+  transform: none;
+  background: var(--black);
+  border: 2px solid #fff;
+  padding: 6px 16px;
+  border-radius: 99px;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  color: #fff;
+}
+
+.timeline.layout-horizontal .timeline-item {
+  width: 280px; /* Largura fixa do slot */
+  height: 0; /* O item em si fica grudado na linha central */
+  flex: 0 0 auto;
+  padding: 0;
+  position: relative;
+  display: flex;
+  justify-content: center; /* Centraliza horizontalmente sobre a bolinha */
+  left: auto !important; right: auto !important;
+  text-align: left !important;
+}
+
+/* O cartão de evento */
+.timeline.layout-horizontal .timeline-card {
+  width: 240px; /* Deixa 40px de respiro (20px cada lado) */
+  height: max-content;
+  position: absolute; /* Liberta o cartão do fluxo de altura 0 */
+}
+
+/* Intercala os cartões para cima e para baixo usando align-items */
+.timeline.layout-horizontal .timeline-item.left {
+  align-items: flex-end; /* Ancora o cartão pelo fundo (vai pra cima da linha) */
+  overflow: visible;
+}
+.timeline.layout-horizontal .timeline-item.right {
+  align-items: flex-start; /* Ancora o cartão pelo topo (vai pra baixo da linha) */
+  overflow: visible;
+}
+.timeline.layout-horizontal .timeline-item.left .timeline-card {
+  bottom: 40px; /* Empurra pra cima */
+}
+.timeline.layout-horizontal .timeline-item.right .timeline-card {
+  top: 40px; /* Empurra pra baixo */
+}
+
+/* A bolinha de junção */
+.timeline.layout-horizontal .timeline-item::before {
+  display: block;
+  content: '';
+  position: absolute;
+  top: -8px; /* Centraliza a bolinha de 16px na altura 0 */
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%);
+  width: 16px; height: 16px;
+  background: var(--red);
+  border: 3px solid #fff;
+  border-radius: 50%;
+  z-index: 2;
+  box-shadow: 0 0 0 1px var(--red);
+}
+
+/* O "cabinho" ligando a bolinha ao cartão */
+.timeline.layout-horizontal .timeline-item::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  width: 2px;
+  height: 40px; /* Exatamente o tamanho do distanciamento */
+  background: var(--red);
+  transform: translateX(-50%);
+  z-index: 1;
+}
+.timeline.layout-horizontal .timeline-item.left::after { bottom: 0; }
+.timeline.layout-horizontal .timeline-item.right::after { top: 0; }
+
+.timeline-card .tc-time{font-size:11px;color:var(--red);font-weight:700;margin-bottom:2px}
+.timeline-card .tc-title{font-size:13px;font-weight:600;margin-bottom:4px}
+.timeline-card .tc-meta{font-size:11px;color:var(--gray-600)}
+
+/* ====== LIST (table) ====== */
+.list-controls{
+  display:flex;gap:12px;margin-bottom:12px;flex-wrap:wrap;align-items:center;
+}
+.list-controls input,.list-controls select{max-width:240px}
+.table-wrap{
+  background:var(--white);
+  border:1px solid var(--gray-200);
+  border-radius:var(--radius-lg);
+  overflow:auto;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+thead{background:var(--gray-100);position:sticky;top:0;z-index:1}
+th{
+  text-align:left;
+  padding:10px 12px;
+  font-weight:600;
+  color:var(--gray-700);
+  border-bottom:2px solid var(--gray-200);
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  cursor:pointer;
+  user-select:none;
+  white-space:nowrap;
+}
+th:hover{color:var(--black)}
+th .sort-arrow{font-size:9px;opacity:.5;margin-left:4px}
+td{
+  padding:10px 12px;
+  border-bottom:1px solid var(--gray-100);
+  vertical-align:top;
+}
+tbody tr{transition:var(--transition);cursor:pointer}
+tbody tr:hover{background:var(--gray-50)}
+.tag{
+  display:inline-block;
+  padding:2px 8px;
+  background:var(--gray-200);
+  color:var(--gray-700);
+  border-radius:99px;
+  font-size:10px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.3px;
+  white-space:nowrap;
+}
+.tag.type-abertura,.tag.type-encerramento,.tag.type-premiacao{background:var(--red);color:#fff}
+.tag.type-palestra{background:var(--red-light);color:#fff}
+.tag.type-dialogo_seguranca{background:var(--red-dark);color:#fff}
+.tag.type-acao_saude{background:#d35a4d;color:#fff}
+.tag.type-workshop{background:var(--gray-800);color:#fff}
+.tag.type-dinamica{background:var(--gray-600);color:#fff}
+.tag.type-ginastica{background:var(--gray-500);color:#fff}
+
+/* ====== PER EVENT ====== */
+.event-detail{
+  max-width:760px;
+  margin:0 auto;
+  background:var(--white);
+  border:1px solid var(--gray-200);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+}
+.event-detail-header{
+  background:var(--black);
+  color:#fff;
+  padding:24px 28px;
+  position:relative;
+}
+.event-detail-header::before{
+  content:'';
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:6px;
+  background:var(--red);
+}
+.event-detail-header .ed-type{
+  display:inline-block;
+  background:var(--red);
+  padding:3px 10px;
+  border-radius:99px;
+  font-size:11px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  margin-bottom:10px;
+}
+.event-detail-header h2{font-size:22px;margin-bottom:6px}
+.event-detail-header .ed-when{font-size:13px;color:var(--gray-300)}
+.event-detail-body{padding:24px 28px}
+.detail-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:20px;
+  margin-bottom:24px;
+}
+.detail-field .df-label{
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  color:var(--gray-500);
+  font-weight:600;
+  margin-bottom:4px;
+}
+.detail-field .df-value{font-size:14px;color:var(--black)}
+.detail-field .df-value.empty{color:var(--gray-400);font-style:italic}
+.event-detail-body .description{
+  background:var(--gray-50);
+  padding:16px;
+  border-radius:var(--radius);
+  margin-bottom:20px;
+  font-size:13px;
+  line-height:1.6;
+  white-space:pre-wrap;
+}
+.enrolled-list{
+  border-top:1px solid var(--gray-200);
+  padding-top:20px;
+}
+.enrolled-list h4{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-600);margin-bottom:12px}
+.enrolled-list ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.enrolled-list li{
+  padding:8px 12px;
+  background:var(--gray-50);
+  border-radius:var(--radius);
+  font-size:13px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.enrolled-list .emp-name{font-weight:500}
+.enrolled-list .emp-sector{color:var(--gray-600);font-size:11px}
+
+/* ====== PHOTO + CAPACITY ====== */
+.event-photo-preview{
+  position:relative;
+  width:100%;max-width:320px;
+  border:1px solid var(--gray-300);
+  border-radius:var(--radius);
+  overflow:hidden;
+  background:var(--gray-100);
+  aspect-ratio:4/3;
+  display:flex;align-items:center;justify-content:center;
+}
+.event-photo-preview img{width:100%;height:100%;object-fit:cover;display:block}
+.event-photo-preview .placeholder{color:var(--gray-500);font-size:12px;text-align:center;padding:20px;line-height:1.4}
+.event-photo-preview .placeholder svg{width:28px;height:28px;color:var(--gray-400);margin-bottom:6px;display:block;margin-left:auto;margin-right:auto}
+.photo-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+
+.event-detail-header.with-photo{
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  position:relative;
+  min-height:220px;
+  padding-top:32px;
+}
+.event-detail-header.with-photo::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.88) 100%);
+}
+.event-detail-header.with-photo > *{position:relative;z-index:1}
+
+.capacity-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.capacity-row input[type=number]{flex:1;min-width:120px}
+.capacity-row input[type=number]:disabled{background:var(--gray-100);color:var(--gray-400);cursor:not-allowed}
+.capacity-row label.inline{
+  display:flex;align-items:center;gap:6px;
+  font-size:12px;color:var(--gray-700);
+  white-space:nowrap;text-transform:none;
+  letter-spacing:0;font-weight:500;cursor:pointer;
+}
+.capacity-row input[type=checkbox]{accent-color:var(--red);width:16px;height:16px;cursor:pointer}
+
+/* ====== FORM SECTIONS / CHECKLIST / TERCEIROS PICKER ====== */
+.form-section{margin-top:18px;padding-top:16px;border-top:1px solid var(--gray-200)}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.section-title{font-size:12px;font-weight:600;color:var(--gray-700);text-transform:uppercase;letter-spacing:.5px}
+.section-hint{font-size:11px;color:var(--gray-500);margin-bottom:8px}
+
+.picker-list{
+  max-height:200px;overflow-y:auto;
+  border:1px solid var(--gray-200);
+  border-radius:var(--radius);
+  padding:6px;background:var(--gray-50);
+}
+.picker-list label{
+  display:flex;align-items:center;gap:8px;
+  padding:5px 8px;border-radius:4px;
+  cursor:pointer;font-size:12px;
+  transition:var(--transition);
+}
+.picker-list label:hover{background:var(--white)}
+.picker-list input[type=checkbox]{accent-color:var(--red);cursor:pointer}
+.picker-list .picker-name{font-weight:500;color:var(--black)}
+.picker-list .picker-meta{color:var(--gray-600);font-size:11px}
+.picker-empty{font-size:12px;color:var(--gray-500);text-align:center;padding:14px}
+
+.tasks-list{display:flex;flex-direction:column;gap:6px}
+.task-row{
+  display:grid;
+  grid-template-columns:32px 1fr 170px 140px 32px;
+  gap:6px;align-items:center;
+  padding:6px;
+  background:var(--white);
+  border:1px solid var(--gray-200);
+  border-radius:var(--radius);
+}
+.task-row input[type=text],.task-row input[type=date]{
+  padding:6px 8px;font-size:12px;
+}
+.task-row .task-cb{
+  display:flex;align-items:center;justify-content:center;
+}
+.task-row .task-cb input[type=checkbox]{
+  width:18px;height:18px;accent-color:var(--red);cursor:pointer;
+}
+.task-row .task-remove{
+  background:none;border:1px solid var(--gray-300);
+  width:32px;height:32px;
+  border-radius:var(--radius);
+  cursor:pointer;color:var(--red);
+  display:flex;align-items:center;justify-content:center;
+  transition:var(--transition);
+  font-size:16px;line-height:1;
+}
+.task-row .task-remove:hover{background:#fdf3f1;border-color:var(--red)}
+@media (max-width:640px){
+  .task-row{grid-template-columns:32px 1fr 32px;grid-template-rows:auto auto auto}
+  .task-row > input[type=text]:nth-of-type(2),
+  .task-row > input[type=date]{grid-column:1/-1}
+}
+
+.event-checklist{
+  border-top:1px solid var(--gray-200);
+  padding-top:20px;margin-bottom:20px;
+}
+.event-checklist h4{
+  font-size:13px;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--gray-600);margin-bottom:12px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.event-checklist .progress{
+  font-size:11px;background:var(--gray-100);
+  padding:2px 10px;border-radius:99px;color:var(--gray-700);
+}
+.event-checklist .progress.complete{background:var(--red);color:#fff}
+.event-checklist ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.event-checklist li{
+  padding:10px 14px;background:var(--gray-50);
+  border-left:3px solid var(--gray-400);
+  border-radius:var(--radius);
+  transition:var(--transition);
+}
+.event-checklist li.done{border-left-color:var(--red);background:#fafafa}
+.event-checklist li.done .task-text{text-decoration:line-through;color:var(--gray-500)}
+.event-checklist .task-line{display:flex;align-items:center;gap:10px}
+.event-checklist .task-line input[type=checkbox]{
+  width:18px;height:18px;accent-color:var(--red);cursor:pointer;flex-shrink:0;
+}
+.event-checklist .task-text{font-size:13px;font-weight:500;flex:1}
+.event-checklist .task-meta{
+  margin-top:6px;font-size:11px;color:var(--gray-600);
+  display:flex;flex-wrap:wrap;gap:14px;padding-left:28px;
+}
+.task-badge{
+  padding:2px 8px;border-radius:99px;
+  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;
+}
+.task-badge.done{background:var(--red);color:#fff}
+.task-badge.pending{background:var(--gray-300);color:var(--gray-800)}
+
+/* ====== MODAL ====== */
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  backdrop-filter:blur(2px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+  padding:20px;
+  animation:fadeIn .2s ease;
+}
+.modal-backdrop.hidden{display:none}
+.modal{
+  background:var(--white);
+  border-radius:var(--radius-lg);
+  max-width:680px;
+  width:100%;
+  max-height:90vh;
+  overflow-y:auto;
+  box-shadow:var(--shadow-lg);
+  animation:scaleIn .25s ease;
+}
+.modal-header{
+  padding:18px 24px;
+  border-bottom:1px solid var(--gray-200);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;top:0;background:var(--white);z-index:1;
+}
+.modal-header h3{font-size:16px}
+.modal-body{padding:20px 24px}
+.modal-footer{
+  padding:14px 24px;
+  border-top:1px solid var(--gray-200);
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  position:sticky;bottom:0;background:var(--white);
+}
+
+/* ====== PRINT MODAL OPTIONS ====== */
+.print-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.print-option{
+  padding:12px 14px;
+  border:1px solid var(--gray-300);
+  background:var(--white);
+  border-radius:var(--radius);
+  text-align:left;
+  cursor:pointer;
+  transition:var(--transition);
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  font-family:inherit;
+}
+.print-option:hover{border-color:var(--red);background:var(--gray-50);transform:translateY(-1px)}
+.print-option strong{font-size:13px;color:var(--black);font-weight:600}
+.print-option small{font-size:11px;color:var(--gray-600);line-height:1.3}
+@media (max-width:520px){.print-options{grid-template-columns:1fr}}
+
+/* ====== EXPORT VIEW ====== */
+.export-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:16px;
+}
+.export-card{
+  background:var(--white);
+  border:1px solid var(--gray-200);
+  border-radius:var(--radius-lg);
+  padding:20px;
+  text-align:center;
+  transition:var(--transition);
+}
+.export-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.export-card svg{width:48px;height:48px;color:var(--red);margin-bottom:12px}
+.export-card h4{font-size:15px;margin-bottom:6px}
+.export-card p{font-size:12px;color:var(--gray-600);margin-bottom:14px;min-height:36px}
+
+/* ====== STATS ====== */
+.stats-row{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:12px;
+  margin-bottom:20px;
+}
+.stat-card{
+  background:var(--white);
+  border:1px solid var(--gray-200);
+  border-radius:var(--radius);
+  padding:14px 16px;
+}
+.stat-card .stat-label{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-500);font-weight:600}
+.stat-card .stat-value{font-size:24px;font-weight:800;color:var(--black);margin-top:4px}
+.stat-card.accent .stat-value{color:var(--red)}
+
+/* ====== LEGEND ====== */
+.legend{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:16px;
+  padding:10px 12px;
+  background:var(--white);
+  border:1px solid var(--gray-200);
+  border-radius:var(--radius);
+}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gray-700)}
+.legend-swatch{width:12px;height:12px;border-radius:3px}
+
+/* ====== UTIL ====== */
+.row-actions{display:flex;gap:4px;justify-content:flex-end}
+.muted{color:var(--gray-500)}
+.text-right{text-align:right}
+.no-print{}
+.hidden{display:none !important}
+
+/* ====== ANIMATIONS ====== */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.cascade > *{animation:fadeUp .4s ease both}
+.cascade > *:nth-child(1){animation-delay:.05s}
+.cascade > *:nth-child(2){animation-delay:.1s}
+.cascade > *:nth-child(3){animation-delay:.15s}
+.cascade > *:nth-child(4){animation-delay:.2s}
+.cascade > *:nth-child(5){animation-delay:.25s}
+.cascade > *:nth-child(6){animation-delay:.3s}
+
+/* ====== PRINT COVER (hidden on screen) ====== */
+.print-cover{display:none}
+
+/* ====== PRINT ====== */
+@media print{
+  /* Force colors / backgrounds in print */
+  *{
+    -webkit-print-color-adjust:exact !important;
+    print-color-adjust:exact !important;
+    color-adjust:exact !important;
+  }
+  body{background:#fff;color:#000;font-size:10pt}
+
+  /* hide all on-screen UI (including any open modal/backdrop) */
+  header.app-header,nav.tabs,.header-actions,.no-print,
+  .list-controls,.gantt-controls,.row-actions,.btn,
+  .modal-backdrop, .view-header, .stats-row, .print-cover {display:none !important}
+
+  main{padding:0;background:#fff;overflow:visible}
+  .view{display:none !important}
+  .view.print-active{display:block !important}
+
+  /* ----- Print cover (hidden for max space) ----- */
+  .print-cover{ display:none !important; }
+  .print-cover-brand strong{
+    display:block;font-size:18pt;color:#c0392b;
+    letter-spacing:.5px;font-weight:800;line-height:1.1;
+  }
+  .print-cover-brand .pcsub{
+    display:block;font-size:8pt;color:#444;
+    line-height:1.4;margin-top:2px;
+  }
+  .print-cover-title{text-align:right}
+  .print-cover-title .ptlabel{
+    display:block;font-size:7pt;text-transform:uppercase;
+    letter-spacing:1.5px;color:#888;
+  }
+  .print-cover-title .print-cover-name{
+    display:block;font-size:13pt;color:#000;
+    font-weight:700;margin-top:2px;
+  }
+  .print-cover-title .print-cover-date{
+    display:block;font-size:8pt;color:#666;margin-top:3px;
+  }
+
+  /* ----- view headers (in-page) ----- */
+  .view-header{margin-bottom:12px;break-after:avoid;page-break-after:avoid}
+  .view-title{font-size:12pt}
+  .view-subtitle{font-size:9pt;color:#555}
+
+  /* ----- @page: default + named (orientation per view) ----- */
+  @page{
+    size:A4;
+    margin:1cm;
+  }
+  @page landscape{size:A4 landscape}
+  @page portrait{size:A4 portrait}
+
+  /* assign orientation per active view */
+  #view-agenda.print-active,
+  #view-gantt.print-active,
+  #view-calendar.print-active,
+  #view-list.print-active,
+  #view-manage.print-active{page:landscape}
+
+  #view-timeline.print-active,
+  #view-event.print-active,
+  #view-participants.print-active{page:portrait}
+
+  /* ----- page-break controls ----- */
+  .gantt-row,.timeline-item,.timeline-day,
+  .event-card,.event-checklist li,.enrolled-list li,
+  .stat-card,.task-row,.cal-day-cell,.detail-field{
+    break-inside:avoid;page-break-inside:avoid;
+  }
+  tr,.picker-list label{break-inside:avoid;page-break-inside:avoid}
+  thead{display:table-header-group}
+  tfoot{display:table-footer-group}
+  h2,h3,h4{break-after:avoid;page-break-after:avoid}
+
+  /* ----- element-specific tweaks ----- */
+  .card,.gantt-container,.calendar,.event-detail,.table-wrap{
+    box-shadow:none;border:1px solid #999;
+  }
+  
+  /* Layout da Agenda - Compactado (5 dias lado a lado numa única folha) */
+  .day-grid {
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 4px !important;
+  }
+  .day-column {
+    display: flex !important;
+    flex-direction: column !important;
+    margin-bottom: 0 !important;
+    border: 1px solid #999 !important;
+    background: #fff !important;
+    border-radius: 2px !important;
+  }
+  .day-header {
+    background: #111 !important;
+    color: #fff !important;
+    border-radius: 1px 1px 0 0 !important;
+    margin-bottom: 2px !important;
+    padding: 2px 4px !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .day-events {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    padding: 0 2px 2px 2px !important;
+  }
+  .event-photo-banner { display: none !important; } /* Imagens removidas */
+  .event-card {
+    width: 100% !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border: 1px solid #aaa !important;
+    background: #fff !important;
+    padding: 3px 4px !important;
+    margin: 0 !important;
+    line-height: 1.1 !important;
+  }
+  /* Coloca o horário e título na mesma linha para economizar espaço! */
+  .event-card .ec-time { display: inline !important; font-size: 7.5pt !important; font-weight: bold !important; margin-right: 4px !important; }
+  .event-card .ec-title { display: inline !important; font-size: 8pt !important; margin-bottom: 0 !important; }
+  .event-card .ec-meta { font-size: 6.5pt !important; gap: 3px !important; margin-top: 2px !important; display: block !important; }
+  .day-header .day-name { font-size: 9pt !important; }
+  .day-header .day-date { font-size: 7pt !important; }
+
+  .stats-row{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px}
+  .stat-card{flex:1; min-width:100px; padding:10px; border:1px solid #ccc}
+  .stat-card .stat-value{font-size:16pt}
+  .stat-card .stat-label{font-size:10pt}
+
+  /* Outros cabeçalhos escuros para impressão */
+  .cal-header-cell,.event-detail-header,.timeline-day span{
+    background:#111 !important;color:#fff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .timeline-day span{padding:4px 10px}
+  .timeline::before{background:#111}
+  .timeline-item::before{background:#c0392b;box-shadow:0 0 0 1px #fff; border-color:#fff}
+  thead{background:#f0f0f0 !important}
+
+  /* events need border in case print backgrounds is off */
+  .gantt-bar, .cal-event {
+    color: #000 !important; 
+    font-weight: bold;
+  }
+
+  /* Layout do Calendário - Super Compacto para 1 folha */
+  .cal-grid {
+    --slot-h: 24px !important; /* Altura da hora bem pequena para caber todas na A4 */
+    min-width: 0 !important;
+  }
+  .cal-time-cell, .cal-day-cell {
+    height: var(--slot-h) !important;
+  }
+  .cal-header-cell {
+    padding: 2px !important;
+    font-size: 8pt !important;
+  }
+  .cal-time-cell {
+    padding: 1px 4px !important;
+    font-size: 7pt !important;
+  }
+  .cal-event {
+    padding: 0 2px !important;
+    font-size: 6.5pt !important;
+    line-height: 1 !important;
+  }
+
+  /* hide Actions column from data tables */
+  #list-table th:last-child,#list-body td:last-child,
+  #view-manage th:last-child,#view-manage td:last-child,
+  #view-participants th:last-child,#view-participants td:last-child{
+    display:none !important;
+  }
+
+  /* gantt: let it use the full page width */
+  .gantt{min-width:0}
+  .gantt-container{border:none;padding:0}
+  .gantt-bar{font-size:8pt}
+
+  /* calendar: shrink to fit */
+  .cal-grid{min-width:0}
+  .cal-event{font-size:8pt}
+
+  /* event detail */
+  .event-detail-header{padding:14px 18px;min-height:auto}
+  .event-detail-header.with-photo{min-height:170px}
+  .event-detail-header h2{font-size:14pt}
+  .event-detail-body{padding:14px 18px}
+  .event-checklist li{padding:8px 12px}
+  .event-checklist .task-text{font-size:10pt}
+
+  /* tables — slightly tighter cells */
+  td,th{padding:6px 8px;font-size:9pt}
+}
+
+@media (max-width:720px){
+  header.app-header{padding:14px 16px;flex-direction:column;align-items:flex-start}
+  nav.tabs{padding:0 12px}
+  main{padding:16px 12px 60px}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header no-print">
+  <div class="brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z"/>
+        <path d="M9 12l2 2 4-4"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <h1>SIPATSMA 2026</h1>
+      <div class="subtitle">Semana Interna de Prevenção de Acidentes e Meio Ambiente · Grupo Açotubo</div>
+      <div class="date-range">8 a 12 de junho de 2026</div>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-primary" onclick="openEventModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      Novo evento
+    </button>
+  </div>
+</header>
+
+<nav class="tabs no-print" id="tabs">
+  <button data-view="agenda" class="active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    Agenda
+  </button>
+  <button data-view="gantt">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h10M3 10h14M3 16h8M3 22h12"/></svg>
+    Gantt
+  </button>
+  <button data-view="calendar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
+    Calendário
+  </button>
+  <button data-view="timeline">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M5 6h14M5 12h14M5 18h14"/></svg>
+    Linha do tempo
+  </button>
+  <button data-view="list">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+    Lista
+  </button>
+  <button data-view="event">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    Por evento
+  </button>
+  <button data-view="participants">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Terceiros
+  </button>
+  <button data-view="manage">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Gerenciar
+  </button>
+  <button data-view="export">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+    Exportar
+  </button>
+</nav>
+
+<main>
+
+  <!-- ===== PRINT COVER (visible only when printing) ===== -->
+  <div class="print-cover" aria-hidden="true">
+    <div class="print-cover-brand">
+      <strong>SIPATSMA 2026</strong>
+      <span class="pcsub">Semana Interna de Prevenção de Acidentes e Meio Ambiente</span>
+      <span class="pcsub">Grupo Açotubo · 8 a 12 de junho de 2026</span>
+    </div>
+    <div class="print-cover-title">
+      <span class="ptlabel">Relatório</span>
+      <strong class="print-cover-name">—</strong>
+      <span class="print-cover-date">—</span>
+    </div>
+  </div>
+
+  <!-- ===== AGENDA ===== -->
+  <section id="view-agenda" class="view active">
+    <div class="view-header">
+      <div>
+        <div class="view-title">Agenda por dia</div>
+        <div class="view-subtitle">Cards agrupados de 8 a 12 de junho. Clique em um evento para editar.</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline" onclick="document.getElementById('agenda-grid').classList.toggle('hide-photos')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg> Alternar Imagens
+        </button>
+        <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
+      </div>
+    </div>
+    <div id="stats-agenda" class="stats-row"></div>
+    <div id="agenda-grid" class="day-grid cascade"></div>
+  </section>
+
+  <!-- ===== GANTT ===== -->
+  <section id="view-gantt" class="view">
+    <div class="view-header">
+      <div>
+        <div class="view-title">Visão Gantt</div>
+        <div class="view-subtitle">Eventos posicionados na faixa horária do dia.</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline" onclick="window.ganttSequential = !window.ganttSequential; renderGantt();">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg> Alternar Modo
+        </button>
+        <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
+      </div>
+    </div>
+    <div id="gantt-legend" class="legend"></div>
+    <div class="gantt-container">
+      <div class="gantt-controls">
+        <label>Hora inicial <input type="number" id="gantt-start" value="6" min="0" max="23" style="width:60px"></label>
+        <label>Hora final <input type="number" id="gantt-end" value="20" min="1" max="24" style="width:60px"></label>
+      </div>
+      <div id="gantt" class="gantt"></div>
+    </div>
+  </section>
+
+  <!-- ===== CALENDAR ===== -->
+  <section id="view-calendar" class="view">
+    <div class="view-header">
+      <div>
+        <div class="view-title">Calendário semanal</div>
+        <div class="view-subtitle">Grade horária estilo agenda. Cada bloco mostra um evento.</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
+      </div>
+    </div>
+    <div class="calendar"><div id="calendar-grid" class="cal-grid"></div></div>
+  </section>
+
+  <!-- ===== TIMELINE ===== -->
+  <section id="view-timeline" class="view">
+    <div class="view-header">
+      <div>
+        <div class="view-title">Linha do tempo</div>
+        <div class="view-subtitle">Sequência cronológica em formato vertical.</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline" onclick="document.getElementById('timeline').classList.toggle('layout-horizontal');">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18"/></svg> Alternar Modo
+        </button>
+        <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
+      </div>
+    </div>
+    <div id="timeline" class="timeline"></div>
+  </section>
+
+  <!-- ===== LIST ===== -->
+  <section id="view-list" class="view">
+    <div class="view-header">
+      <div>
+        <div class="view-title">Lista detalhada</div>
+        <div class="view-subtitle">Tabela completa, filtrável e ordenável.</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
+      </div>
+    </div>
+    <div class="list-controls">
+      <input type="text" id="list-search" placeholder="Buscar por título, local, responsável...">
+      <select id="list-filter-day"><option value="">Todos os dias</option></select>
+      <select id="list-filter-type"><option value="">Todos os tipos</option></select>
+    </div>
+    <div class="table-wrap">
+      <table id="list-table">
+        <thead>
+          <tr>
+            <th data-sort="date">Data <span class="sort-arrow">▲▼</span></th>
+            <th data-sort="startTime">Início <span class="sort-arrow">▲▼</span></th>
+            <th data-sort="endTime">Fim <span class="sort-arrow">▲▼</span></th>
+            <th data-sort="title">Título <span class="sort-arrow">▲▼</span></th>
+            <th data-sort="type">Tipo <span class="sort-arrow">▲▼</span></th>
+            <th data-sort="location">Local <span class="sort-arrow">▲▼</span></th>
+            <th data-sort="responsibleName">Responsável <span class="sort-arrow">▲▼</span></th>
+            <th data-sort="responsibleSector">Setor <span class="sort-arrow">▲▼</span></th>
+            <th class="text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="list-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== PER EVENT ===== -->
+  <section id="view-event" class="view">
+    <div class="view-header">
+      <div>
+        <div class="view-title">Visão por evento</div>
+        <div class="view-subtitle">Detalhe completo de um evento selecionado e seus inscritos.</div>
+      </div>
+      <div class="header-actions">
+        <select id="event-select" style="min-width:280px"></select>
+        <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
+      </div>
+    </div>
+    <div id="event-detail-container"></div>
+  </section>
+
+  <!-- ===== PARTICIPANTS (TERCEIROS) ===== -->
+  <section id="view-participants" class="view">
+    <div class="view-header">
+      <div>
+        <div class="view-title">Terceiros</div>
+        <div class="view-subtitle">Cadastro de pessoas externas que vão participar. Todos os campos são opcionais.</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" onclick="openParticipantModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Adicionar terceiro</button>
+        <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
+      </div>
+    </div>
+    <div class="list-controls">
+      <input type="text" id="part-search" placeholder="Buscar por nome, telefone, e-mail...">
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Telefone</th>
+            <th>E-mail</th>
+            <th>Inscrito em</th>
+            <th class="text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="participants-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== MANAGE ===== -->
+  <section id="view-manage" class="view">
+    <div class="view-header">
+      <div>
+        <div class="view-title">Gerenciar eventos</div>
+        <div class="view-subtitle">Cadastre, edite e remova eventos da programação.</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" onclick="openEventModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Novo evento</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Horário</th>
+            <th>Título</th>
+            <th>Tipo</th>
+            <th>Local</th>
+            <th>Responsável</th>
+            <th>Setor</th>
+            <th>Capacidade</th>
+            <th class="text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="manage-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== EXPORT ===== -->
+  <section id="view-export" class="view">
+    <div class="view-header">
+      <div>
+        <div class="view-title">Exportar e fazer backup</div>
+        <div class="view-subtitle">Baixe a programação em diferentes formatos.</div>
+      </div>
+    </div>
+    <div class="export-grid">
+      <div class="export-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 8l4 4 4-4M8 16h8"/></svg>
+        <h4>Excel (.xlsx)</h4>
+        <p>Planilha com abas: Eventos, Terceiros, Inscrições, Resumo por dia e Checklist.</p>
+        <button class="btn btn-primary" onclick="exportXLSX()">Baixar XLSX</button>
+      </div>
+      <div class="export-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+        <h4>Imprimir / PDF</h4>
+        <p>Escolha uma visualização para imprimir em A4 ou salvar como PDF.</p>
+        <button class="btn btn-primary" onclick="openPrintModal()">Escolher visualização</button>
+      </div>
+      <div class="export-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        <h4>Backup JSON</h4>
+        <p>Salve todos os dados em arquivo para backup ou transferência.</p>
+        <button class="btn" onclick="exportJSON()">Baixar JSON</button>
+      </div>
+      <div class="export-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+        <h4>Restaurar JSON</h4>
+        <p>Importe um backup. <strong style="color:var(--red)">Substitui</strong> os dados atuais.</p>
+        <input type="file" id="import-json" accept=".json" style="display:none" onchange="importJSON(event)">
+        <button class="btn" onclick="document.getElementById('import-json').click()">Selecionar arquivo</button>
+      </div>
+      <div class="export-card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z"/></svg>
+        <h4>Limpar tudo</h4>
+        <p>Apaga todos os eventos e participantes. Não pode ser desfeito.</p>
+        <button class="btn btn-danger" onclick="clearAll()">Apagar dados</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ====== EVENT MODAL ====== -->
+<div id="event-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="event-modal-title">Novo evento</h3>
+      <button class="btn btn-ghost btn-icon" onclick="closeEventModal()" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="event-form" onsubmit="event.preventDefault();saveEvent()">
+        <input type="hidden" id="event-id">
+        <div class="form-grid">
+          <div class="form-row span-full">
+            <label class="field-label" for="event-title">Título <span class="required">*</span></label>
+            <input type="text" id="event-title" required maxlength="120">
+          </div>
+          <div class="form-row">
+            <label class="field-label" for="event-date">Dia <span class="required">*</span></label>
+            <select id="event-date" required>
+              <option value="2026-06-08">Segunda · 08/jun</option>
+              <option value="2026-06-09">Terça · 09/jun</option>
+              <option value="2026-06-10">Quarta · 10/jun</option>
+              <option value="2026-06-11">Quinta · 11/jun</option>
+              <option value="2026-06-12">Sexta · 12/jun</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label class="field-label" for="event-type">Tipo</label>
+            <select id="event-type">
+              <option value="palestra">Palestra</option>
+              <option value="dialogo_seguranca">Diálogo de Segurança</option>
+              <option value="workshop">Workshop</option>
+              <option value="dinamica">Dinâmica</option>
+              <option value="ginastica">Ginástica laboral</option>
+              <option value="acao_saude">Ação de Saúde</option>
+              <option value="abertura">Abertura</option>
+              <option value="encerramento">Encerramento</option>
+              <option value="premiacao">Premiação</option>
+              <option value="outro">Outro</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label class="field-label" for="event-start">Início <span class="required">*</span></label>
+            <input type="time" id="event-start" required>
+          </div>
+          <div class="form-row">
+            <label class="field-label" for="event-end">Fim <span class="required">*</span></label>
+            <input type="time" id="event-end" required>
+          </div>
+          <div class="form-row span-2">
+            <label class="field-label" for="event-location">Local</label>
+            <input type="text" id="event-location" maxlength="120" placeholder="Ex: Auditório / Refeitório / Pátio">
+          </div>
+          <div class="form-row">
+            <label class="field-label" for="event-capacity">Capacidade</label>
+            <div class="capacity-row">
+              <input type="number" id="event-capacity" min="0" placeholder="Nº de vagas">
+              <label class="inline"><input type="checkbox" id="event-capacity-unlimited" onchange="onCapacityToggle()"> Ilimitada</label>
+            </div>
+          </div>
+          <div class="form-row">
+            <label class="field-label" for="event-resp-name">Responsável interno (nome)</label>
+            <input type="text" id="event-resp-name" maxlength="80" list="responsibles-names-datalist" autocomplete="off">
+          </div>
+          <div class="form-row">
+            <label class="field-label" for="event-resp-sector">Setor do responsável</label>
+            <input type="text" id="event-resp-sector" maxlength="80" list="sectors-datalist" autocomplete="off">
+          </div>
+          <div class="form-row span-full">
+            <label class="field-label">Foto do evento (opcional)</label>
+            <div class="event-photo-preview" id="event-photo-preview">
+              <div class="placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                Nenhuma foto selecionada
+              </div>
+            </div>
+            <input type="file" id="event-photo-file" accept="image/*" style="display:none" onchange="onPhotoSelected(event)">
+            <div class="photo-actions">
+              <button type="button" class="btn btn-sm" onclick="document.getElementById('event-photo-file').click()">Selecionar foto</button>
+              <button type="button" class="btn btn-sm btn-danger" id="event-photo-remove" style="display:none" onclick="removePhoto()">Remover foto</button>
+            </div>
+          </div>
+          <div class="form-row span-full">
+            <label class="field-label" for="event-description">Descrição</label>
+            <textarea id="event-description" maxlength="1000"></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-header">
+            <div class="section-title">Terceiros inscritos neste evento</div>
+          </div>
+          <div class="section-hint">Selecione na lista — use a aba "Terceiros" para cadastrar novos.</div>
+          <div id="event-participants-list" class="picker-list"></div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-header">
+            <div class="section-title">Checklist de tarefas para realizar este evento</div>
+            <button type="button" class="btn btn-sm" onclick="addTaskRow()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px"><path d="M12 5v14M5 12h14"/></svg>
+              Adicionar tarefa
+            </button>
+          </div>
+          <div class="section-hint">Marque a caixa quando a tarefa estiver concluída. O responsável tem autocomplete a partir dos terceiros cadastrados e nomes já usados.</div>
+          <div id="event-tasks-list" class="tasks-list"></div>
+          <datalist id="responsibles-names-datalist"></datalist>
+          <datalist id="sectors-datalist"></datalist>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-danger" id="event-delete-btn" style="display:none" onclick="deleteCurrentEvent()">Excluir</button>
+          <button type="button" class="btn" id="event-duplicate-btn" style="display:none" onclick="duplicateCurrentEvent()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>
+            Duplicar
+          </button>
+          <button type="button" class="btn" onclick="closeEventModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PARTICIPANT (TERCEIRO) MODAL ====== -->
+<div id="participant-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="participant-modal-title">Novo terceiro</h3>
+      <button class="btn btn-ghost btn-icon" onclick="closeParticipantModal()" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="participant-form" onsubmit="event.preventDefault();saveParticipant()">
+        <input type="hidden" id="participant-id">
+        <div class="form-grid">
+          <div class="form-row span-full">
+            <label class="field-label" for="p-name">Nome</label>
+            <input type="text" id="p-name" maxlength="120">
+          </div>
+          <div class="form-row">
+            <label class="field-label" for="p-phone">Telefone</label>
+            <input type="tel" id="p-phone" maxlength="40" placeholder="(11) 99999-9999">
+          </div>
+          <div class="form-row">
+            <label class="field-label" for="p-email">E-mail</label>
+            <input type="email" id="p-email" maxlength="120">
+          </div>
+          <div class="form-row span-full">
+            <label class="field-label">Inscrever em eventos (opcional)</label>
+            <div id="p-events-list" class="picker-list"></div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-danger" id="participant-delete-btn" style="display:none" onclick="deleteCurrentParticipant()">Excluir</button>
+          <button type="button" class="btn" onclick="closeParticipantModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ====== PRINT MODAL ====== -->
+<div id="print-modal" class="modal-backdrop hidden">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <h3>Imprimir / Salvar em PDF</h3>
+      <button class="btn btn-ghost btn-icon" onclick="closePrintModal()" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="muted" style="margin-bottom:14px;font-size:13px">Selecione a visualização que deseja imprimir ou salvar como PDF. A janela de impressão do navegador será aberta em seguida.</p>
+      <div class="print-options">
+        <button class="print-option" onclick="printView('agenda')"><strong>Agenda por dia</strong><small>Cards agrupados de segunda a sexta</small></button>
+        <button class="print-option" onclick="printView('gantt')"><strong>Gantt</strong><small>Barras horizontais por faixa horária</small></button>
+        <button class="print-option" onclick="printView('calendar')"><strong>Calendário</strong><small>Grade semanal com horários</small></button>
+        <button class="print-option" onclick="printView('timeline')"><strong>Linha do tempo</strong><small>Sequência cronológica vertical</small></button>
+        <button class="print-option" onclick="printView('list')"><strong>Lista detalhada</strong><small>Tabela com todos os eventos</small></button>
+        <button class="print-option" onclick="printView('event')"><strong>Por evento</strong><small>Detalhe do evento selecionado</small></button>
+        <button class="print-option" onclick="printView('manage')"><strong>Gerenciar eventos</strong><small>Tabela completa do cronograma</small></button>
+        <button class="print-option" onclick="printView('participants')"><strong>Terceiros</strong><small>Lista de pessoas cadastradas</small></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://wkhcdyjsbkbyavnkvkni.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndraGNkeWpzYmtieWF2bmt2a25pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1NTA1NTYsImV4cCI6MjA5NDEyNjU1Nn0.67LtHdqmNf2o8GoOqax9oQUluFxcgdeBJag_iPa0Bbs';
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* ============================================================
+   STATE & STORAGE
+   ============================================================ */
+const STORAGE_KEY = 'sipatsma2026_v1';
+const DAYS = [
+  {iso:'2026-06-08', short:'Seg', long:'Segunda-feira', label:'08/jun'},
+  {iso:'2026-06-09', short:'Ter', long:'Terça-feira',  label:'09/jun'},
+  {iso:'2026-06-10', short:'Qua', long:'Quarta-feira', label:'10/jun'},
+  {iso:'2026-06-11', short:'Qui', long:'Quinta-feira', label:'11/jun'},
+  {iso:'2026-06-12', short:'Sex', long:'Sexta-feira',  label:'12/jun'},
+];
+const TYPE_LABELS = {
+  palestra:'Palestra', dialogo_seguranca:'Diálogo de Segurança',
+  workshop:'Workshop', dinamica:'Dinâmica',
+  ginastica:'Ginástica laboral', acao_saude:'Ação de Saúde',
+  abertura:'Abertura', encerramento:'Encerramento',
+  premiacao:'Premiação', outro:'Outro'
+};
+const TYPE_COLORS = {
+  palestra:'#e74c3c', dialogo_seguranca:'#8b1e15',
+  workshop:'#2c2c2c', dinamica:'#666',
+  ginastica:'#888', acao_saude:'#d35a4d',
+  abertura:'#c0392b', encerramento:'#c0392b',
+  premiacao:'#c0392b', outro:'#aaa'
+};
+
+let state = {events:[], participants:[]};
+let listSort = {field:'date', dir:'asc'};
+let currentEventDetailId = null;
+
+function uid(){return 'id_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7)}
+async function load(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){state = JSON.parse(raw); renderAll();}
+  }catch(e){console.warn('local load failed', e)}
+  if(!state.events) state.events = [];
+  if(!state.participants) state.participants = [];
+
+  try {
+    const [evsRes, ptsRes] = await Promise.all([
+      supabaseClient.from('events').select('*'),
+      supabaseClient.from('participants').select('*')
+    ]);
+    if(evsRes.error) throw evsRes.error;
+    if(ptsRes.error) throw ptsRes.error;
+
+    if (evsRes.data.length > 0 || ptsRes.data.length > 0) {
+        state.events = evsRes.data.map(r => ({ id: r.id, ...r.data }));
+        state.participants = ptsRes.data.map(r => ({ id: r.id, ...r.data }));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        renderAll();
+    }
+  } catch(e) {
+    console.warn('supabase load failed', e);
+  }
+}
+
+let saveTimeout = null;
+function save(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  if(saveTimeout) clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(async () => {
+    try {
+      if(state.events.length > 0) {
+         await supabaseClient.from('events').upsert(state.events.map(e => {
+           const { id, ...data } = e;
+           return { id, data };
+         }));
+      }
+      if(state.participants.length > 0) {
+         await supabaseClient.from('participants').upsert(state.participants.map(p => {
+           const { id, ...data } = p;
+           return { id, data };
+         }));
+      }
+    } catch(e) {
+      console.error('Supabase sync failed', e);
+    }
+  }, 1000);
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+function fmtTime(t){return t||''}
+function fmtDayShort(iso){const d=DAYS.find(d=>d.iso===iso);return d?`${d.short} ${d.label}`:iso}
+function fmtDayLong(iso){const d=DAYS.find(d=>d.iso===iso);return d?`${d.long} · ${d.label}`:iso}
+function timeToMinutes(t){if(!t)return 0;const[h,m]=t.split(':').map(Number);return h*60+m}
+function sortedEvents(){
+  return [...state.events].sort((a,b)=>{
+    if(a.date!==b.date) return a.date.localeCompare(b.date);
+    return (a.startTime||'').localeCompare(b.startTime||'');
+  });
+}
+function escapeHTML(s){return (s??'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function fmtTaskDate(iso){
+  if(!iso) return '';
+  const [y,m,d] = iso.split('-');
+  if(!y||!m||!d) return iso;
+  return `${d}/${m}/${y}`;
+}
+function toggleTaskDone(eventId, taskId, done){
+  const e = state.events.find(x=>x.id===eventId);
+  if(!e||!e.tasks) return;
+  const t = e.tasks.find(x=>x.id===taskId);
+  if(!t) return;
+  t.done = !!done;
+  save();
+  renderEventDetail();
+}
+
+/* ============================================================
+   TAB NAVIGATION
+   ============================================================ */
+document.querySelectorAll('nav.tabs button').forEach(btn=>{
+  btn.addEventListener('click',()=>switchView(btn.dataset.view));
+});
+function switchView(name){
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
+  document.querySelectorAll('.view').forEach(v=>{
+    const active = v.id==='view-'+name;
+    v.classList.toggle('active',active);
+    v.classList.toggle('print-active',active);
+  });
+  renderAll();
+}
+
+/* ============================================================
+   RENDER: AGENDA
+   ============================================================ */
+function renderAgenda(){
+  const grid = document.getElementById('agenda-grid');
+  const stats = document.getElementById('stats-agenda');
+  const total = state.events.length;
+  const distinctTypes = new Set(state.events.map(e=>e.type)).size;
+  const totalHours = state.events.reduce((acc,e)=>{
+    const dur = (timeToMinutes(e.endTime)-timeToMinutes(e.startTime))/60;
+    return acc + (dur>0?dur:0);
+  },0);
+  stats.innerHTML = `
+    <div class="stat-card"><div class="stat-label">Eventos</div><div class="stat-value">${total}</div></div>
+    <div class="stat-card accent"><div class="stat-label">Dias</div><div class="stat-value">5</div></div>
+    <div class="stat-card"><div class="stat-label">Tipos</div><div class="stat-value">${distinctTypes}</div></div>
+    <div class="stat-card"><div class="stat-label">Horas programadas</div><div class="stat-value">${totalHours.toFixed(1)}h</div></div>
+    <div class="stat-card"><div class="stat-label">Terceiros</div><div class="stat-value">${state.participants.length}</div></div>
+  `;
+
+  if(total===0){
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <h3>Nenhum evento cadastrado</h3>
+        <p>Comece adicionando o primeiro evento da SIPATSMA 2026.</p>
+        <button class="btn btn-primary" onclick="openEventModal()">+ Novo evento</button>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = DAYS.map(d=>{
+    const events = sortedEvents().filter(e=>e.date===d.iso);
+    return `
+      <div class="day-column">
+        <div class="day-header">
+          <div>
+            <div class="day-name">${d.long}</div>
+            <div class="day-date">${d.label}</div>
+          </div>
+          <div class="day-count">${events.length}</div>
+        </div>
+        <div class="day-events ${events.length===0?'empty':''}">
+          ${events.length===0
+            ? 'sem eventos'
+            : events.map(e=>`
+              <div class="event-card type-${e.type}" onclick="openEventModal('${e.id}')">
+                ${e.photo?`<div class="event-photo-banner" style="background-image:url('${e.photo}')"></div>`:''}
+                <div class="ec-time">${escapeHTML(e.startTime)} – ${escapeHTML(e.endTime)}</div>
+                <div class="ec-title">${escapeHTML(e.title)}</div>
+                <div class="ec-meta">
+                  <span class="tag type-${e.type}">${TYPE_LABELS[e.type]||'—'}</span>
+                  ${e.location?`<span>📍 ${escapeHTML(e.location)}</span>`:''}
+                  ${e.responsibleName?`<span>👤 ${escapeHTML(e.responsibleName)}</span>`:''}
+                </div>
+              </div>
+            `).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   RENDER: GANTT
+   ============================================================ */
+function renderGantt(){
+  const root = document.getElementById('gantt');
+  const startH = Math.max(0, parseInt(document.getElementById('gantt-start').value||'6'));
+  const endH = Math.min(24, parseInt(document.getElementById('gantt-end').value||'20'));
+  const totalH = Math.max(1, endH-startH);
+  const labelWidth = '120px';
+  const trackCols = `${labelWidth} 1fr`;
+
+  // legend
+  const legend = document.getElementById('gantt-legend');
+  legend.innerHTML = Object.entries(TYPE_LABELS).map(([k,v])=>`
+    <div class="legend-item"><span class="legend-swatch" style="background:${TYPE_COLORS[k]}"></span>${v}</div>
+  `).join('');
+
+  // header with hour ticks
+  let header = `<div class="gantt-header" style="grid-template-columns:${trackCols}"><div></div><div style="position:relative;height:18px">`;
+  for(let h=startH; h<=endH; h++){
+    const pct = ((h-startH)/totalH)*100;
+    let transform = 'translateX(-50%)';
+    if(h === startH) transform = 'translateX(0)';
+    if(h === endH) transform = 'translateX(-100%)';
+    header += `<div class="gantt-hour-label" style="position:absolute;left:${pct}%;transform:${transform}">${String(h).padStart(2,'0')}h</div>`;
+  }
+  header += `</div></div>`;
+
+  // rows
+  let rows = '';
+  if (window.ganttSequential) {
+    root.classList.add('sequential-mode');
+
+    // Header expandido para os 5 dias
+    let headerHtml = `<div class="gantt-header" style="grid-template-columns:${trackCols}"><div></div><div style="display:flex;">`;
+    DAYS.forEach(d => {
+      headerHtml += `<div style="flex:1; border-right:2px solid var(--gray-300); position:relative;">
+        <div style="text-align:center; font-weight:bold; padding:4px 0; background:var(--gray-100); border-bottom:1px solid var(--gray-300); font-size:11px;">${d.short} ${d.label}</div>
+        <div style="position:relative; height:18px;">`;
+      for(let h=startH; h<=endH; h++){
+        if (h === endH && i !== DAYS.length - 1) continue;
+        const pct = ((h-startH)/totalH)*100;
+        headerHtml += `<div class="gantt-hour-label" style="position:absolute;left:${pct}%;transform:translateX(-50%)">${String(h).padStart(2,'0')}h</div>`;
+      }
+      headerHtml += `</div></div>`;
+    });
+    headerHtml += `</div></div>`;
+
+    let rows = '';
+    sortedEvents().forEach(e => {
+      const d = DAYS.find(day=>day.iso===e.date) || {long:'', label:'', short:''};
+      const dayIndex = DAYS.findIndex(day=>day.iso===e.date);
+      if (dayIndex === -1) return;
+
+      let rowContent = `<div class="gantt-row" style="grid-template-columns:${trackCols}">
+        <div class="gantt-label" style="font-size:11px; display:flex; flex-direction:column; justify-content:center; gap:2px; padding:4px 8px">
+          <strong style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis" title="${escapeHTML(e.title)}">${escapeHTML(e.title)}</strong>
+          <span class="gantt-date" style="margin:0">${d.short} ${escapeHTML(e.startTime)}</span>
+        </div>
+        <div class="gantt-track" style="display:flex; padding:0; background:transparent;">`;
+      
+      DAYS.forEach((loopDay, i) => {
+        rowContent += `<div style="flex:1; position:relative; border-right:2px solid var(--gray-300); background:var(--gray-50);">`;
+        for(let h=startH; h<=endH; h++){
+          const pct = ((h-startH)/totalH)*100;
+          rowContent += `<div class="gantt-hour" style="left:${pct}%; border-color:var(--gray-200);"></div>`;
+        }
+        if (i === dayIndex) {
+          const sM = timeToMinutes(e.startTime), eM = timeToMinutes(e.endTime);
+          const startMin = startH*60, endMin = endH*60;
+          if(eM>startMin && sM<endMin) {
+            const left = Math.max(0, ((sM-startMin)/(endMin-startMin))*100);
+            const right = Math.min(100, ((eM-startMin)/(endMin-startMin))*100);
+            const width = right - left;
+            rowContent += `<div class="gantt-bar type-${e.type}" style="left:${left}%;width:${width}%" onclick="openEventModal('${e.id}')" title="${escapeHTML(e.title)} (${e.startTime}–${e.endTime})">${escapeHTML(e.title)}</div>`;
+          }
+        }
+        rowContent += `</div>`;
+      });
+      rowContent += `</div></div>`;
+      rows += `<tr><td style="padding:0; border:none; break-inside:avoid; page-break-inside:avoid;">${rowContent}</td></tr>`;
+    });
+    
+    root.innerHTML = `
+      <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
+        <thead style="display:table-header-group;">
+          <tr><td style="padding:0; border:none;">${headerHtml}</td></tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    `;
+
+  } else {
+    root.classList.remove('sequential-mode');
+    DAYS.forEach(d=>{
+      const events = state.events.filter(e=>e.date===d.iso);
+      let rowContent = `<div class="gantt-row" style="grid-template-columns:${trackCols}">
+        <div class="gantt-label">${d.long}<span class="gantt-date">${d.label}</span></div>
+        <div class="gantt-track">`;
+      // hour grid lines
+      for(let h=startH; h<=endH; h++){
+        const pct = ((h-startH)/totalH)*100;
+        rowContent += `<div class="gantt-hour" style="left:${pct}%"></div>`;
+      }
+      // bars
+      events.forEach(e=>{
+        const sM = timeToMinutes(e.startTime), eM = timeToMinutes(e.endTime);
+        const startMin = startH*60, endMin = endH*60;
+        if(eM<=startMin || sM>=endMin) return;
+        const left = Math.max(0, ((sM-startMin)/(endMin-startMin))*100);
+        const right = Math.min(100, ((eM-startMin)/(endMin-startMin))*100);
+        const width = right - left;
+        rowContent += `<div class="gantt-bar type-${e.type}" style="left:${left}%;width:${width}%" onclick="openEventModal('${e.id}')" title="${escapeHTML(e.title)} (${e.startTime}–${e.endTime})">${escapeHTML(e.title)}</div>`;
+      });
+      rowContent += `</div></div>`;
+      rows += `<tr><td style="padding:0; border:none; break-inside:avoid; page-break-inside:avoid;">${rowContent}</td></tr>`;
+    });
+
+    root.innerHTML = `
+      <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
+        <thead style="display:table-header-group;">
+          <tr><td style="padding:0; border:none;">${header}</td></tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    `;
+  }
+}
+document.getElementById('gantt-start').addEventListener('input',renderGantt);
+document.getElementById('gantt-end').addEventListener('input',renderGantt);
+
+/* ============================================================
+   RENDER: CALENDAR
+   ============================================================ */
+function renderCalendar(){
+  const root = document.getElementById('calendar-grid');
+  // determine bounds from events, default 7-19
+  let minH = 7, maxH = 19;
+  if(state.events.length){
+    let mn = Infinity, mx = -Infinity;
+    state.events.forEach(e=>{
+      const s = timeToMinutes(e.startTime), en = timeToMinutes(e.endTime);
+      if(s<mn) mn = s; if(en>mx) mx = en;
+    });
+    if(isFinite(mn)) minH = Math.max(0, Math.floor(mn/60));
+    if(isFinite(mx)) maxH = Math.min(24, Math.ceil(mx/60));
+    if(maxH-minH<6) maxH = minH+6;
+  }
+  const slotH = 60; // px per hour
+  const totalHours = maxH-minH;
+
+  let html = '<div class="cal-header-cell"></div>';
+  DAYS.forEach(d=>{
+    html += `<div class="cal-header-cell">${d.long}<div style="font-weight:400;font-size:11px;color:var(--gray-300);margin-top:2px">${d.label}</div></div>`;
+  });
+  for(let h=minH; h<maxH; h++){
+    html += `<div class="cal-time-cell">${String(h).padStart(2,'0')}:00</div>`;
+    DAYS.forEach(d=>{
+      // events that *start* in this hour for this day
+      const evs = state.events.filter(e=>e.date===d.iso && timeToMinutes(e.startTime)>=h*60 && timeToMinutes(e.startTime)<(h+1)*60);
+      let cellHTML = '';
+      evs.forEach(e=>{
+        const sM = timeToMinutes(e.startTime), eM = timeToMinutes(e.endTime);
+        const topPct = ((sM%60)/60)*100;
+        const heightPct = Math.max(10, ((eM-sM)/60)*100); /* mínimo visual */
+        cellHTML += `<div class="cal-event type-${e.type}" style="top:${topPct}%;height:calc(${heightPct}% - 2px)" onclick="openEventModal('${e.id}')" title="${escapeHTML(e.title)}">
+          <div class="ce-time">${escapeHTML(e.startTime)}–${escapeHTML(e.endTime)}</div>
+          <div>${escapeHTML(e.title)}</div>
+        </div>`;
+      });
+      html += `<div class="cal-day-cell">${cellHTML}</div>`;
+    });
+  }
+  root.innerHTML = html;
+  // Usar var(--slot-h, 60px) permite que o CSS controle a altura do grid
+  root.style.gridTemplateRows = `auto repeat(${totalHours}, var(--slot-h, 60px))`;
+}
+
+/* ============================================================
+   RENDER: TIMELINE
+   ============================================================ */
+function renderTimeline(){
+  const root = document.getElementById('timeline');
+  if(state.events.length===0){
+    root.innerHTML = `<div class="empty-state"><h3>Sem eventos para exibir.</h3></div>`;
+    return;
+  }
+  let html = '';
+  let lastDay = null;
+  let idx = 0;
+  sortedEvents().forEach(e=>{
+    if(e.date!==lastDay){
+      html += `<div class="timeline-day"><span>${fmtDayLong(e.date)}</span></div>`;
+      lastDay = e.date;
+      idx = 0;
+    }
+    const side = idx%2===0 ? 'left':'right';
+    idx++;
+    html += `<div class="timeline-item ${side}">
+      <div class="timeline-card" onclick="openEventModal('${e.id}')">
+        <div class="tc-time">${escapeHTML(e.startTime)} – ${escapeHTML(e.endTime)}</div>
+        <div class="tc-title">${escapeHTML(e.title)}</div>
+        <div class="tc-meta">
+          <span class="tag type-${e.type}">${TYPE_LABELS[e.type]||'—'}</span>
+          ${e.location?` · 📍 ${escapeHTML(e.location)}`:''}
+          ${e.responsibleName?` · 👤 ${escapeHTML(e.responsibleName)}`:''}
+        </div>
+      </div>
+    </div>`;
+  });
+  root.innerHTML = html;
+}
+
+/* ============================================================
+   RENDER: LIST
+   ============================================================ */
+function renderListFilters(){
+  const daySel = document.getElementById('list-filter-day');
+  const typeSel = document.getElementById('list-filter-type');
+  const curDay = daySel.value, curType = typeSel.value;
+  daySel.innerHTML = '<option value="">Todos os dias</option>' + DAYS.map(d=>`<option value="${d.iso}">${d.long} · ${d.label}</option>`).join('');
+  typeSel.innerHTML = '<option value="">Todos os tipos</option>' + Object.entries(TYPE_LABELS).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+  daySel.value = curDay; typeSel.value = curType;
+}
+function renderList(){
+  const tbody = document.getElementById('list-body');
+  const q = (document.getElementById('list-search').value||'').toLowerCase();
+  const day = document.getElementById('list-filter-day').value;
+  const type = document.getElementById('list-filter-type').value;
+  let evs = [...state.events];
+  if(day) evs = evs.filter(e=>e.date===day);
+  if(type) evs = evs.filter(e=>e.type===type);
+  if(q) evs = evs.filter(e=>[e.title,e.location,e.responsibleName,e.responsibleSector,e.description].some(v=>(v||'').toLowerCase().includes(q)));
+  evs.sort((a,b)=>{
+    const f = listSort.field;
+    const av = (a[f]||'').toString().toLowerCase();
+    const bv = (b[f]||'').toString().toLowerCase();
+    if(av<bv) return listSort.dir==='asc'?-1:1;
+    if(av>bv) return listSort.dir==='asc'?1:-1;
+    return 0;
+  });
+  const table = document.getElementById('list-table');
+  table.querySelectorAll('tbody').forEach(b => b.remove());
+
+  if(evs.length===0){
+    const tb = document.createElement('tbody');
+    tb.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--gray-500)">Nenhum evento encontrado.</td></tr>`;
+    table.appendChild(tb);
+    return;
+  }
+
+  let lastDate = null;
+  let currentTbodyHtml = '';
+
+  evs.forEach(e => {
+    if (listSort.field === 'date' && e.date !== lastDate) {
+      if (currentTbodyHtml) {
+        const tb = document.createElement('tbody');
+        tb.style.pageBreakInside = 'avoid';
+        tb.style.breakInside = 'avoid';
+        tb.innerHTML = currentTbodyHtml;
+        table.appendChild(tb);
+        currentTbodyHtml = '';
+      }
+      currentTbodyHtml += `<tr class="date-separator" style="background:var(--gray-100); color:var(--black); font-weight:700; font-size:13px; border-top:2px solid var(--gray-300);">
+        <td colspan="9" style="padding:10px 16px;">📅 ${fmtDayLong(e.date)}</td>
+      </tr>`;
+      lastDate = e.date;
+    }
+    currentTbodyHtml += `
+    <tr onclick="openEventModal('${e.id}')">
+      <td>${fmtDayShort(e.date)}</td>
+      <td>${escapeHTML(e.startTime)}</td>
+      <td>${escapeHTML(e.endTime)}</td>
+      <td><strong>${escapeHTML(e.title)}</strong></td>
+      <td><span class="tag type-${e.type}">${TYPE_LABELS[e.type]||'—'}</span></td>
+      <td>${escapeHTML(e.location||'')}</td>
+      <td>${escapeHTML(e.responsibleName||'')}</td>
+      <td>${escapeHTML(e.responsibleSector||'')}</td>
+      <td class="text-right">
+        <div class="row-actions">
+          <button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();openEventModal('${e.id}')">Editar</button>
+        </div>
+      </td>
+    </tr>`;
+  });
+
+  if (currentTbodyHtml) {
+    const tb = document.createElement('tbody');
+    tb.style.pageBreakInside = 'avoid';
+    tb.style.breakInside = 'avoid';
+    tb.innerHTML = currentTbodyHtml;
+    table.appendChild(tb);
+  }
+}
+document.querySelectorAll('#list-table th[data-sort]').forEach(th=>{
+  th.addEventListener('click',()=>{
+    const f = th.dataset.sort;
+    if(listSort.field===f) listSort.dir = listSort.dir==='asc'?'desc':'asc';
+    else {listSort.field=f; listSort.dir='asc'}
+    renderList();
+  });
+});
+document.getElementById('list-search').addEventListener('input',renderList);
+document.getElementById('list-filter-day').addEventListener('change',renderList);
+document.getElementById('list-filter-type').addEventListener('change',renderList);
+
+/* ============================================================
+   RENDER: PER EVENT
+   ============================================================ */
+function renderEventSelect(){
+  const sel = document.getElementById('event-select');
+  const prev = sel.value;
+  if(state.events.length===0){
+    sel.innerHTML = '<option value="">— sem eventos —</option>';
+    currentEventDetailId = null;
+  }else{
+    sel.innerHTML = sortedEvents().map(e=>`<option value="${e.id}">${fmtDayShort(e.date)} ${e.startTime} — ${escapeHTML(e.title)}</option>`).join('');
+    if(prev && state.events.some(e=>e.id===prev)) sel.value = prev;
+    currentEventDetailId = sel.value;
+  }
+}
+document.getElementById('event-select').addEventListener('change',e=>{
+  currentEventDetailId = e.target.value;
+  renderEventDetail();
+});
+function renderEventDetail(){
+  const root = document.getElementById('event-detail-container');
+  if(!currentEventDetailId){
+    root.innerHTML = `<div class="empty-state"><h3>Nenhum evento selecionado.</h3><p>Adicione eventos pela aba Gerenciar.</p></div>`;
+    return;
+  }
+  const e = state.events.find(x=>x.id===currentEventDetailId);
+  if(!e){root.innerHTML='';return}
+  const enrolled = state.participants.filter(p=>(p.enrolledEvents||[]).includes(e.id));
+  const dur = (timeToMinutes(e.endTime)-timeToMinutes(e.startTime))/60;
+  const headerClass = e.photo ? 'event-detail-header with-photo' : 'event-detail-header';
+  const headerStyle = e.photo ? `style="background-image:url('${e.photo}')"` : '';
+  root.innerHTML = `
+    <div class="event-detail">
+      <div class="${headerClass}" ${headerStyle}>
+        <div class="ed-type">${TYPE_LABELS[e.type]||'—'}</div>
+        <h2>${escapeHTML(e.title)}</h2>
+        <div class="ed-when">${fmtDayLong(e.date)} · ${escapeHTML(e.startTime)} – ${escapeHTML(e.endTime)} ${dur>0?`· ${dur.toFixed(1)}h`:''}</div>
+      </div>
+      <div class="event-detail-body">
+        <div class="detail-grid">
+          <div class="detail-field"><div class="df-label">Local</div><div class="df-value ${e.location?'':'empty'}">${escapeHTML(e.location||'não informado')}</div></div>
+          <div class="detail-field"><div class="df-label">Responsável</div><div class="df-value ${e.responsibleName?'':'empty'}">${escapeHTML(e.responsibleName||'não informado')}</div></div>
+          <div class="detail-field"><div class="df-label">Setor</div><div class="df-value ${e.responsibleSector?'':'empty'}">${escapeHTML(e.responsibleSector||'não informado')}</div></div>
+          <div class="detail-field"><div class="df-label">Capacidade</div><div class="df-value">${e.capacity==null?'Ilimitada':e.capacity+' vagas'}</div></div>
+          <div class="detail-field"><div class="df-label">Inscritos</div><div class="df-value">${enrolled.length}${e.capacity!=null?` / ${e.capacity}`:''}</div></div>
+        </div>
+        ${e.description?`<div class="description">${escapeHTML(e.description)}</div>`:''}
+        ${(e.tasks&&e.tasks.length>0)?(()=>{
+          const doneCount = e.tasks.filter(t=>t.done).length;
+          const total = e.tasks.length;
+          const complete = doneCount===total;
+          return `<div class="event-checklist">
+            <h4>Checklist de tarefas <span class="progress ${complete?'complete':''}">${doneCount}/${total}${complete?' · concluído':''}</span></h4>
+            <ul>
+              ${e.tasks.map(t=>`
+                <li class="${t.done?'done':'pending'}">
+                  <label class="task-line">
+                    <input type="checkbox" ${t.done?'checked':''} onchange="toggleTaskDone('${e.id}','${t.id}',this.checked)">
+                    <span class="task-text">${escapeHTML(t.text||'(sem descrição)')}</span>
+                    <span class="task-badge ${t.done?'done':'pending'}">${t.done?'Concluída':'Pendente'}</span>
+                  </label>
+                  ${(t.responsible||t.date)?`<div class="task-meta">
+                    ${t.responsible?`<span>👤 ${escapeHTML(t.responsible)}</span>`:''}
+                    ${t.date?`<span>📅 ${fmtTaskDate(t.date)}</span>`:''}
+                  </div>`:''}
+                </li>
+              `).join('')}
+            </ul>
+          </div>`;
+        })():''}
+        <div class="enrolled-list">
+          <h4>Terceiros inscritos (${enrolled.length})</h4>
+          ${enrolled.length===0
+            ? '<p class="muted" style="font-size:12px">Nenhum terceiro inscrito neste evento ainda.</p>'
+            : `<ul>${enrolled.map(p=>{
+                const contact = [p.phone, p.email].filter(Boolean).map(escapeHTML).join(' · ');
+                return `<li><span class="emp-name">${escapeHTML(p.name||'(sem nome)')}</span><span class="emp-sector">${contact}</span></li>`;
+              }).join('')}</ul>`
+          }
+        </div>
+        <div class="form-actions">
+          <button class="btn" onclick="openEventModal('${e.id}')">Editar evento</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ============================================================
+   RENDER: PARTICIPANTS
+   ============================================================ */
+document.getElementById('part-search').addEventListener('input',renderParticipants);
+function renderParticipants(){
+  const tbody = document.getElementById('participants-body');
+  const q = (document.getElementById('part-search').value||'').toLowerCase();
+  let parts = [...state.participants];
+  if(q) parts = parts.filter(p=>[p.name,p.phone,p.email].some(v=>(v||'').toLowerCase().includes(q)));
+  if(parts.length===0){
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-500)">Nenhum terceiro cadastrado.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = parts.map(p=>{
+    const enrolled = (p.enrolledEvents||[]).map(eid=>{
+      const e = state.events.find(x=>x.id===eid);
+      return e ? `<span class="tag" title="${fmtDayShort(e.date)} ${e.startTime}">${escapeHTML(e.title)}</span>` : '';
+    }).join(' ');
+    return `<tr onclick="openParticipantModal('${p.id}')">
+      <td><strong>${escapeHTML(p.name||'(sem nome)')}</strong></td>
+      <td>${escapeHTML(p.phone||'')}</td>
+      <td>${escapeHTML(p.email||'')}</td>
+      <td><div style="display:flex;gap:4px;flex-wrap:wrap">${enrolled||'<span class="muted" style="font-size:11px">—</span>'}</div></td>
+      <td class="text-right"><button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();openParticipantModal('${p.id}')">Editar</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ============================================================
+   RENDER: MANAGE
+   ============================================================ */
+function renderManage(){
+  const tbody = document.getElementById('manage-body');
+  if(state.events.length===0){
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--gray-500)">Nenhum evento cadastrado. Clique em "Novo evento" para começar.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = sortedEvents().map(e=>`
+    <tr onclick="openEventModal('${e.id}')">
+      <td>${fmtDayShort(e.date)}</td>
+      <td>${escapeHTML(e.startTime)} – ${escapeHTML(e.endTime)}</td>
+      <td><strong>${escapeHTML(e.title)}</strong></td>
+      <td><span class="tag type-${e.type}">${TYPE_LABELS[e.type]||'—'}</span></td>
+      <td>${escapeHTML(e.location||'')}</td>
+      <td>${escapeHTML(e.responsibleName||'')}</td>
+      <td>${escapeHTML(e.responsibleSector||'')}</td>
+      <td>${e.capacity==null?'<span class="muted">Ilimitada</span>':e.capacity}</td>
+      <td class="text-right">
+        <div class="row-actions">
+          <button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();openEventModal('${e.id}')">Editar</button>
+          <button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();duplicateEvent('${e.id}')" title="Duplicar evento">Duplicar</button>
+          <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();deleteEvent('${e.id}')">Excluir</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+/* ============================================================
+   EVENT MODAL
+   ============================================================ */
+let currentModalTasks = [];
+
+function _openEventModalCore(data, isEdit){
+  // data = event-shaped object (or null for fresh new); isEdit = true if editing existing record
+  const modal = document.getElementById('event-modal');
+  document.getElementById('event-form').reset();
+
+  let photo = null;
+  if(data){
+    document.getElementById('event-modal-title').textContent = isEdit ? 'Editar evento' : 'Novo evento (cópia)';
+    document.getElementById('event-id').value = isEdit ? (data.id||'') : '';
+    document.getElementById('event-title').value = data.title||'';
+    document.getElementById('event-date').value = data.date||DAYS[0].iso;
+    document.getElementById('event-type').value = data.type||'palestra';
+    document.getElementById('event-start').value = data.startTime||'';
+    document.getElementById('event-end').value = data.endTime||'';
+    document.getElementById('event-location').value = data.location||'';
+    document.getElementById('event-capacity').value = (data.capacity==null?'':data.capacity);
+    document.getElementById('event-capacity-unlimited').checked = (data.capacity==null);
+    document.getElementById('event-resp-name').value = data.responsibleName||'';
+    document.getElementById('event-resp-sector').value = data.responsibleSector||'';
+    document.getElementById('event-description').value = data.description||'';
+    photo = data.photo||null;
+    currentModalTasks = (data.tasks||[]).map(t=>({...t}));
+    document.getElementById('event-delete-btn').style.display = isEdit ? '' : 'none';
+    document.getElementById('event-duplicate-btn').style.display = isEdit ? '' : 'none';
+  }else{
+    document.getElementById('event-modal-title').textContent = 'Novo evento';
+    document.getElementById('event-id').value = '';
+    document.getElementById('event-date').value = DAYS[0].iso;
+    document.getElementById('event-type').value = 'palestra';
+    document.getElementById('event-capacity-unlimited').checked = false;
+    currentModalTasks = [];
+    document.getElementById('event-delete-btn').style.display = 'none';
+    document.getElementById('event-duplicate-btn').style.display = 'none';
+  }
+
+  setPhotoPreview(photo);
+  onCapacityToggle();
+  renderEventTerceirosPicker(isEdit && data ? data.id : null);
+  refreshTasksUI();
+  refreshResponsiblesDatalist();
+
+  modal.classList.remove('hidden');
+  setTimeout(()=>document.getElementById('event-title').focus(),50);
+}
+
+function openEventModal(id){
+  if(id){
+    const e = state.events.find(x=>x.id===id);
+    if(!e) return;
+    _openEventModalCore(e, true);
+  }else{
+    _openEventModalCore(null, false);
+  }
+}
+
+function duplicateEvent(id){
+  const orig = state.events.find(e=>e.id===id);
+  if(!orig) return;
+  const clone = JSON.parse(JSON.stringify(orig));
+  clone.id = '';
+  clone.title = (clone.title||'') + ' (cópia)';
+  if(clone.tasks) clone.tasks = clone.tasks.map(t=>({...t, id:uid(), done:false}));
+  _openEventModalCore(clone, false);
+}
+
+function duplicateCurrentEvent(){
+  // Use whatever is currently in the form (including unsaved edits)
+  const previewImg = document.querySelector('#event-photo-preview img');
+  const unlim = document.getElementById('event-capacity-unlimited').checked;
+  const capRaw = parseInt(document.getElementById('event-capacity').value);
+  const clone = {
+    title: (document.getElementById('event-title').value||'') + ' (cópia)',
+    date: document.getElementById('event-date').value,
+    type: document.getElementById('event-type').value,
+    startTime: document.getElementById('event-start').value,
+    endTime: document.getElementById('event-end').value,
+    location: document.getElementById('event-location').value,
+    capacity: unlim || isNaN(capRaw) ? null : capRaw,
+    responsibleName: document.getElementById('event-resp-name').value,
+    responsibleSector: document.getElementById('event-resp-sector').value,
+    description: document.getElementById('event-description').value,
+    photo: previewImg ? previewImg.src : null,
+    tasks: currentModalTasks.map(t=>({...t, id:uid(), done:false})),
+  };
+  _openEventModalCore(clone, false);
+}
+
+/* ====== Terceiros picker (within event modal) ====== */
+function renderEventTerceirosPicker(eventId){
+  const container = document.getElementById('event-participants-list');
+  if(state.participants.length===0){
+    container.innerHTML = '<div class="picker-empty">Nenhum terceiro cadastrado ainda. Cadastre na aba "Terceiros" para poder inscrevê-los aqui.</div>';
+    return;
+  }
+  const sorted = [...state.participants].sort((a,b)=>(a.name||'').localeCompare(b.name||'','pt-BR'));
+  container.innerHTML = sorted.map(p=>{
+    const checked = eventId && (p.enrolledEvents||[]).includes(eventId);
+    const meta = [p.phone, p.email].filter(Boolean).map(escapeHTML).join(' · ');
+    return `<label>
+      <input type="checkbox" value="${p.id}" ${checked?'checked':''}>
+      <span class="picker-name">${escapeHTML(p.name||'(sem nome)')}</span>
+      ${meta?`<span class="picker-meta">· ${meta}</span>`:''}
+    </label>`;
+  }).join('');
+}
+
+/* ====== Checklist (within event modal) ====== */
+function refreshTasksUI(){
+  const container = document.getElementById('event-tasks-list');
+  if(currentModalTasks.length===0){
+    container.innerHTML = '<div class="picker-empty">Nenhuma tarefa adicionada. Clique em "Adicionar tarefa" para criar a primeira.</div>';
+    return;
+  }
+  container.innerHTML = currentModalTasks.map((t,i)=>`
+    <div class="task-row" data-idx="${i}">
+      <div class="task-cb"><input type="checkbox" ${t.done?'checked':''} onchange="onTaskChange(${i},'done',this.checked)" title="${t.done?'Concluída':'Pendente'}"></div>
+      <input type="text" placeholder="Descrição da tarefa" value="${escapeHTML(t.text||'')}" oninput="onTaskChange(${i},'text',this.value)">
+      <input type="text" placeholder="Responsável" list="responsibles-names-datalist" autocomplete="off" value="${escapeHTML(t.responsible||'')}" oninput="onTaskChange(${i},'responsible',this.value)">
+      <input type="date" value="${escapeHTML(t.date||'')}" onchange="onTaskChange(${i},'date',this.value)">
+      <button type="button" class="task-remove" onclick="removeTaskRow(${i})" title="Remover tarefa">×</button>
+    </div>
+  `).join('');
+}
+function onTaskChange(i, field, value){
+  if(currentModalTasks[i]) currentModalTasks[i][field] = value;
+}
+function addTaskRow(){
+  currentModalTasks.push({id:uid(), text:'', responsible:'', date:'', done:false});
+  refreshTasksUI();
+}
+function removeTaskRow(i){
+  currentModalTasks.splice(i,1);
+  refreshTasksUI();
+}
+function refreshResponsiblesDatalist(){
+  // Pool of names: event responsibles + task responsibles + terceiros names
+  const names = new Set();
+  state.events.forEach(e=>{
+    if(e.responsibleName) names.add(e.responsibleName.trim());
+    (e.tasks||[]).forEach(t=>{if(t.responsible) names.add(t.responsible.trim())});
+  });
+  state.participants.forEach(p=>{if(p.name) names.add(p.name.trim())});
+  const dlNames = document.getElementById('responsibles-names-datalist');
+  if(dlNames) dlNames.innerHTML = [...names].filter(Boolean).sort((a,b)=>a.localeCompare(b,'pt-BR')).map(n=>`<option value="${escapeHTML(n)}">`).join('');
+
+  // Pool of sectors: event responsibleSector values
+  const sectors = new Set();
+  state.events.forEach(e=>{if(e.responsibleSector) sectors.add(e.responsibleSector.trim())});
+  const dlSectors = document.getElementById('sectors-datalist');
+  if(dlSectors) dlSectors.innerHTML = [...sectors].filter(Boolean).sort((a,b)=>a.localeCompare(b,'pt-BR')).map(s=>`<option value="${escapeHTML(s)}">`).join('');
+}
+
+function onCapacityToggle(){
+  const unlim = document.getElementById('event-capacity-unlimited').checked;
+  const inp = document.getElementById('event-capacity');
+  inp.disabled = unlim;
+  if(unlim){inp.value = ''; inp.placeholder = 'Ilimitada';}
+  else{inp.placeholder = 'Nº de vagas';}
+}
+
+function setPhotoPreview(dataUrl){
+  const preview = document.getElementById('event-photo-preview');
+  const removeBtn = document.getElementById('event-photo-remove');
+  if(dataUrl){
+    preview.innerHTML = `<img src="${dataUrl}" alt="Foto do evento">`;
+    removeBtn.style.display = '';
+  }else{
+    preview.innerHTML = `<div class="placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      Nenhuma foto selecionada
+    </div>`;
+    removeBtn.style.display = 'none';
+  }
+}
+
+function removePhoto(){setPhotoPreview(null)}
+
+function onPhotoSelected(ev){
+  const file = ev.target.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')){alert('O arquivo selecionado não é uma imagem.');ev.target.value='';return;}
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const maxW = 1000, maxH = 750;
+      let w = img.width, h = img.height;
+      if(w>maxW){h = h*(maxW/w); w = maxW;}
+      if(h>maxH){w = w*(maxH/h); h = maxH;}
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+      setPhotoPreview(dataUrl);
+    };
+    img.onerror = ()=>alert('Não foi possível carregar a imagem.');
+    img.src = e.target.result;
+  };
+  reader.onerror = ()=>alert('Não foi possível ler o arquivo.');
+  reader.readAsDataURL(file);
+  ev.target.value = '';
+}
+function closeEventModal(){document.getElementById('event-modal').classList.add('hidden')}
+function saveEvent(){
+  const id = document.getElementById('event-id').value;
+  const unlim = document.getElementById('event-capacity-unlimited').checked;
+  const capRaw = parseInt(document.getElementById('event-capacity').value);
+  const previewImg = document.querySelector('#event-photo-preview img');
+  const tasks = currentModalTasks
+    .filter(t=>(t.text||'').trim() || (t.responsible||'').trim() || t.date || t.done)
+    .map(t=>({
+      id: t.id || uid(),
+      text: (t.text||'').trim(),
+      responsible: (t.responsible||'').trim(),
+      date: t.date || '',
+      done: !!t.done
+    }));
+  const data = {
+    title: document.getElementById('event-title').value.trim(),
+    date: document.getElementById('event-date').value,
+    type: document.getElementById('event-type').value,
+    startTime: document.getElementById('event-start').value,
+    endTime: document.getElementById('event-end').value,
+    location: document.getElementById('event-location').value.trim(),
+    capacity: unlim || isNaN(capRaw) ? null : capRaw,
+    responsibleName: document.getElementById('event-resp-name').value.trim(),
+    responsibleSector: document.getElementById('event-resp-sector').value.trim(),
+    description: document.getElementById('event-description').value.trim(),
+    photo: previewImg ? previewImg.src : null,
+    tasks: tasks,
+  };
+  if(timeToMinutes(data.endTime) <= timeToMinutes(data.startTime)){
+    alert('A hora final deve ser maior que a hora inicial.');
+    return;
+  }
+  let savedEventId;
+  try{
+    if(id){
+      const idx = state.events.findIndex(e=>e.id===id);
+      if(idx>=0) state.events[idx] = {...state.events[idx], ...data};
+      savedEventId = id;
+    }else{
+      savedEventId = uid();
+      state.events.push({id:savedEventId, ...data});
+    }
+    // bidirectional sync with terceiros checkboxes
+    const checked = new Set([...document.querySelectorAll('#event-participants-list input[type=checkbox]:checked')].map(c=>c.value));
+    state.participants.forEach(p=>{
+      const enrolled = p.enrolledEvents||[];
+      const has = enrolled.includes(savedEventId);
+      const shouldHave = checked.has(p.id);
+      if(shouldHave && !has) p.enrolledEvents = [...enrolled, savedEventId];
+      else if(!shouldHave && has) p.enrolledEvents = enrolled.filter(eid=>eid!==savedEventId);
+    });
+    save();
+  }catch(err){
+    alert('Não foi possível salvar — armazenamento do navegador cheio. Tente usar fotos menores ou remova fotos antigas.\n\nDetalhe: '+err.message);
+    return;
+  }
+  closeEventModal();
+  renderAll();
+}
+function deleteCurrentEvent(){
+  const id = document.getElementById('event-id').value;
+  if(id) deleteEvent(id);
+}
+async function deleteEvent(id){
+  if(!confirm('Excluir este evento? Os terceiros inscritos serão desinscritos.')) return;
+  state.events = state.events.filter(e=>e.id!==id);
+  state.participants.forEach(p=>{
+    if(p.enrolledEvents) p.enrolledEvents = p.enrolledEvents.filter(x=>x!==id);
+  });
+  save();
+  try { await supabaseClient.from('events').delete().eq('id', id); } catch(e){}
+  closeEventModal();
+  renderAll();
+}
+
+/* ============================================================
+   PARTICIPANT MODAL
+   ============================================================ */
+function openParticipantModal(id){
+  const modal = document.getElementById('participant-modal');
+  const form = document.getElementById('participant-form');
+  form.reset();
+  let enrolled = [];
+  if(id){
+    const p = state.participants.find(x=>x.id===id);
+    if(!p) return;
+    document.getElementById('participant-modal-title').textContent = 'Editar terceiro';
+    document.getElementById('participant-id').value = p.id;
+    document.getElementById('p-name').value = p.name||'';
+    document.getElementById('p-phone').value = p.phone||'';
+    document.getElementById('p-email').value = p.email||'';
+    enrolled = p.enrolledEvents||[];
+    document.getElementById('participant-delete-btn').style.display = '';
+  }else{
+    document.getElementById('participant-modal-title').textContent = 'Novo terceiro';
+    document.getElementById('participant-id').value = '';
+    document.getElementById('participant-delete-btn').style.display = 'none';
+  }
+  const list = document.getElementById('p-events-list');
+  if(state.events.length===0){
+    list.innerHTML = '<div class="picker-empty">Nenhum evento cadastrado para inscrever.</div>';
+  }else{
+    list.innerHTML = sortedEvents().map(e=>`
+      <label>
+        <input type="checkbox" value="${e.id}" ${enrolled.includes(e.id)?'checked':''}>
+        <span class="picker-name">${fmtDayShort(e.date)} ${escapeHTML(e.startTime)} — ${escapeHTML(e.title)}</span>
+      </label>`).join('');
+  }
+  modal.classList.remove('hidden');
+  setTimeout(()=>document.getElementById('p-name').focus(),50);
+}
+function closeParticipantModal(){document.getElementById('participant-modal').classList.add('hidden')}
+function saveParticipant(){
+  const id = document.getElementById('participant-id').value;
+  const checks = [...document.querySelectorAll('#p-events-list input[type=checkbox]:checked')].map(c=>c.value);
+  const data = {
+    name: document.getElementById('p-name').value.trim(),
+    phone: document.getElementById('p-phone').value.trim(),
+    email: document.getElementById('p-email').value.trim(),
+    enrolledEvents: checks
+  };
+  if(id){
+    const idx = state.participants.findIndex(p=>p.id===id);
+    if(idx>=0){
+      // overwrite — drop legacy fields (sector, registration)
+      state.participants[idx] = {id, ...data};
+    }
+  }else{
+    state.participants.push({id:uid(), ...data});
+  }
+  save();
+  closeParticipantModal();
+  renderAll();
+}
+async function deleteCurrentParticipant(){
+  const id = document.getElementById('participant-id').value;
+  if(!id) return;
+  if(!confirm('Excluir este terceiro?')) return;
+  state.participants = state.participants.filter(p=>p.id!==id);
+  save();
+  try { await supabaseClient.from('participants').delete().eq('id', id); } catch(e){}
+  closeParticipantModal();
+  renderAll();
+}
+
+/* ============================================================
+   EXPORTS
+   ============================================================ */
+function exportXLSX(){
+  if(typeof XLSX==='undefined'){alert('A biblioteca de exportação ainda está carregando. Tente novamente em alguns segundos.');return}
+  const wb = XLSX.utils.book_new();
+
+  // Sheet 1: Eventos
+  const evHeaders = ['Data','Dia da semana','Início','Fim','Duração (h)','Título','Tipo','Local','Responsável','Setor','Capacidade','Descrição'];
+  const evRows = sortedEvents().map(e=>{
+    const dur = (timeToMinutes(e.endTime)-timeToMinutes(e.startTime))/60;
+    const d = DAYS.find(x=>x.iso===e.date);
+    return [
+      e.date, d?d.long:'', e.startTime, e.endTime, dur>0?Number(dur.toFixed(2)):'',
+      e.title, TYPE_LABELS[e.type]||e.type, e.location||'',
+      e.responsibleName||'', e.responsibleSector||'',
+      e.capacity==null?'Ilimitada':e.capacity,
+      e.description||''
+    ];
+  });
+  const ws1 = XLSX.utils.aoa_to_sheet([evHeaders,...evRows]);
+  ws1['!cols'] = [{wch:12},{wch:14},{wch:8},{wch:8},{wch:10},{wch:36},{wch:16},{wch:24},{wch:22},{wch:18},{wch:11},{wch:50}];
+  XLSX.utils.book_append_sheet(wb, ws1, 'Eventos');
+
+  // Sheet 2: Terceiros
+  const pHeaders = ['Nome','Telefone','E-mail','Qtd. eventos inscritos'];
+  const pRows = state.participants.map(p=>[
+    p.name||'', p.phone||'', p.email||'',
+    (p.enrolledEvents||[]).length
+  ]);
+  const ws2 = XLSX.utils.aoa_to_sheet([pHeaders,...pRows]);
+  ws2['!cols'] = [{wch:30},{wch:18},{wch:30},{wch:22}];
+  XLSX.utils.book_append_sheet(wb, ws2, 'Terceiros');
+
+  // Sheet 3: Inscrições
+  const iHeaders = ['Terceiro','Telefone','E-mail','Evento','Data','Início','Fim','Tipo','Local'];
+  const iRows = [];
+  state.participants.forEach(p=>{
+    (p.enrolledEvents||[]).forEach(eid=>{
+      const e = state.events.find(x=>x.id===eid); if(!e) return;
+      iRows.push([
+        p.name||'(sem nome)', p.phone||'', p.email||'',
+        e.title, e.date, e.startTime, e.endTime, TYPE_LABELS[e.type]||e.type, e.location||''
+      ]);
+    });
+  });
+  const ws3 = XLSX.utils.aoa_to_sheet([iHeaders,...iRows]);
+  ws3['!cols'] = [{wch:28},{wch:18},{wch:30},{wch:36},{wch:12},{wch:8},{wch:8},{wch:16},{wch:24}];
+  XLSX.utils.book_append_sheet(wb, ws3, 'Inscrições');
+
+  // Sheet 4: Resumo por dia
+  const dHeaders = ['Dia','Data','Qtd. eventos','Horas programadas'];
+  const dRows = DAYS.map(d=>{
+    const evs = state.events.filter(e=>e.date===d.iso);
+    const hours = evs.reduce((acc,e)=>{const dur=(timeToMinutes(e.endTime)-timeToMinutes(e.startTime))/60;return acc+(dur>0?dur:0)},0);
+    return [d.long, d.label, evs.length, Number(hours.toFixed(2))];
+  });
+  const ws4 = XLSX.utils.aoa_to_sheet([dHeaders,...dRows]);
+  ws4['!cols']=[{wch:16},{wch:10},{wch:14},{wch:18}];
+  XLSX.utils.book_append_sheet(wb, ws4, 'Resumo por dia');
+
+  // Sheet 5: Checklist (tarefas de cada evento)
+  const cHeaders = ['Evento','Data evento','Início','Tarefa','Responsável','Prazo','Status'];
+  const cRows = [];
+  sortedEvents().forEach(e=>{
+    (e.tasks||[]).forEach(t=>{
+      cRows.push([
+        e.title, e.date, e.startTime,
+        t.text||'', t.responsible||'', t.date||'',
+        t.done?'Concluída':'Pendente'
+      ]);
+    });
+  });
+  const ws5 = XLSX.utils.aoa_to_sheet([cHeaders,...(cRows.length?cRows:[['(nenhuma tarefa cadastrada)','','','','','','']])]);
+  ws5['!cols']=[{wch:36},{wch:12},{wch:8},{wch:42},{wch:24},{wch:12},{wch:12}];
+  XLSX.utils.book_append_sheet(wb, ws5, 'Checklist');
+
+  XLSX.writeFile(wb, `SIPATSMA_2026_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+function exportJSON(){
+  const blob = new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `SIPATSMA_2026_backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function importJSON(ev){
+  const file = ev.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const data = JSON.parse(e.target.result);
+      if(!data.events || !Array.isArray(data.events)) throw new Error('Formato inválido');
+      if(!confirm(`Importar ${data.events.length} evento(s) e ${(data.participants||[]).length} terceiro(s)? Os dados atuais serão substituídos.`)) return;
+      state = {events:data.events, participants:data.participants||[]};
+      save();
+      renderAll();
+      alert('Importação concluída.');
+    }catch(err){alert('Erro ao ler o arquivo: '+err.message)}
+  };
+  reader.readAsText(file);
+  ev.target.value = '';
+}
+async function clearAll(){
+  if(!confirm('Tem certeza? Isso apagará TODOS os eventos e terceiros cadastrados.')) return;
+  if(!confirm('Confirmar novamente: esta ação não pode ser desfeita.')) return;
+  state = {events:[], participants:[]};
+  save();
+  try {
+    const evs = await supabaseClient.from('events').select('id');
+    if(evs.data && evs.data.length) await supabaseClient.from('events').delete().in('id', evs.data.map(d=>d.id));
+    const pts = await supabaseClient.from('participants').select('id');
+    if(pts.data && pts.data.length) await supabaseClient.from('participants').delete().in('id', pts.data.map(d=>d.id));
+  }catch(e){}
+  renderAll();
+}
+
+/* ============================================================
+   RENDER ALL
+   ============================================================ */
+function renderAll(){
+  renderAgenda();
+  renderGantt();
+  renderCalendar();
+  renderTimeline();
+  renderListFilters();
+  renderList();
+  renderEventSelect();
+  renderEventDetail();
+  renderParticipants();
+  renderManage();
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    if(!document.getElementById('event-modal').classList.contains('hidden')) closeEventModal();
+    if(!document.getElementById('participant-modal').classList.contains('hidden')) closeParticipantModal();
+    if(!document.getElementById('print-modal').classList.contains('hidden')) closePrintModal();
+  }
+});
+
+/* ============================================================
+   PRINT DIALOG + PRINT COVER (header & footer)
+   ============================================================ */
+const VIEW_NAMES = {
+  'view-agenda':'Agenda por dia',
+  'view-gantt':'Visão Gantt',
+  'view-calendar':'Calendário semanal',
+  'view-timeline':'Linha do tempo',
+  'view-list':'Lista detalhada de eventos',
+  'view-event':'Detalhe do evento',
+  'view-participants':'Terceiros cadastrados',
+  'view-manage':'Gerenciar eventos',
+  'view-export':'Exportação',
+};
+
+function updatePrintCover(){
+  const active = document.querySelector('.view.print-active');
+  const viewName = active ? (VIEW_NAMES[active.id] || '—') : '—';
+  const nameEl = document.querySelector('.print-cover-name');
+  const dateEl = document.querySelector('.print-cover-date');
+  if(nameEl) nameEl.textContent = viewName;
+  if(dateEl){
+    const d = new Date();
+    const data = d.toLocaleDateString('pt-BR');
+    const hora = d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    dateEl.textContent = `Impresso em ${data} às ${hora}`;
+  }
+}
+window.addEventListener('beforeprint', updatePrintCover);
+
+function openPrintModal(){document.getElementById('print-modal').classList.remove('hidden')}
+function closePrintModal(){document.getElementById('print-modal').classList.add('hidden')}
+function printView(name){
+  closePrintModal();
+  switchView(name);
+  // give the browser a moment to apply the view switch (and Event-detail to render) before printing
+  setTimeout(()=>{ updatePrintCover(); window.print(); }, 250);
+}
+
+/* ============================================================
+   BACKDROP DISMISSAL (robust: requires both mousedown AND click
+   on the backdrop itself; prevents accidental close from drags,
+   text selection, or sub-pixel movement that ends on backdrop)
+   ============================================================ */
+['event-modal','participant-modal','print-modal'].forEach(id=>{
+  const bd = document.getElementById(id);
+  if(!bd) return;
+  let mdOnBackdrop = false;
+  bd.addEventListener('mousedown', e=>{ mdOnBackdrop = (e.target===bd) });
+  bd.addEventListener('touchstart', e=>{ mdOnBackdrop = (e.target===bd) }, {passive:true});
+  bd.addEventListener('click', e=>{
+    if(mdOnBackdrop && e.target===bd){
+      if(id==='event-modal') closeEventModal();
+      else if(id==='participant-modal') closeParticipantModal();
+      else if(id==='print-modal') closePrintModal();
+    }
+    mdOnBackdrop = false;
+  });
+});
+
+load();
+renderAll();
+// ensure first view is also marked as print-active
+document.getElementById('view-agenda').classList.add('print-active');
+</script>
+</body>
+</html>
