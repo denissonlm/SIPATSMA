@@ -1026,6 +1026,45 @@ tbody tr:hover{background:var(--gray-50)}
 .no-print{}
 .hidden{display:none !important}
 
+/* ====== PASSWORD LOCK ====== */
+.lock-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 12px;
+  background:var(--gray-100);border:1px solid var(--gray-300);
+  border-radius:var(--radius);cursor:pointer;font-size:13px;
+  transition:var(--transition);
+}
+.lock-btn:hover{background:var(--gray-200)}
+.lock-btn.unlocked{background:#e8f5e9;border-color:#a5d6a7;color:#2e7d32}
+.lock-btn svg{width:14px;height:14px}
+
+/* ====== PLANNING VIEW ====== */
+.planning-table-wrap{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:auto}
+.action-status-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;
+}
+.action-status-badge.done{background:#e8f5e9;color:#2e7d32}
+.action-status-badge.pending{background:var(--gray-200);color:var(--gray-700)}
+/* mini action chip shown in views */
+.action-chip{
+  display:inline-block;
+  background:#1565c0;color:#fff;
+  padding:1px 7px;border-radius:99px;font-size:10px;font-weight:600;
+  margin:1px;
+  cursor:default;
+}
+.action-chip.done{background:#2e7d32}
+.view-actions-toggle{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 12px;
+  background:var(--white);border:1px solid var(--gray-300);
+  border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:500;
+  transition:var(--transition);
+}
+.view-actions-toggle:hover{background:var(--gray-50)}
+.view-actions-toggle.active{background:#e3f0ff;border-color:#90caf9;color:#1565c0}
+
 /* ====== ANIMATIONS ====== */
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -1266,9 +1305,13 @@ tbody tr:hover{background:var(--gray-50)}
     </div>
   </div>
   <div class="header-actions">
-    <button class="btn btn-primary" onclick="openEventModal()">
+    <button class="btn btn-primary" onclick="requireAuth(openEventModal)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
       Novo evento
+    </button>
+    <button class="lock-btn" id="lock-btn" onclick="toggleLock()" title="Clique para bloquear/desbloquear edição">
+      <svg id="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span id="lock-label">Bloqueado</span>
     </button>
   </div>
 </header>
@@ -1310,6 +1353,10 @@ tbody tr:hover{background:var(--gray-50)}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
     Exportar
   </button>
+  <button data-view="planning">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m-6 9l2 2 4-4"/></svg>
+    Planejamento
+  </button>
 </nav>
 
 <main>
@@ -1336,6 +1383,10 @@ tbody tr:hover{background:var(--gray-50)}
         <div class="view-subtitle">Cards agrupados de 8 a 12 de junho. Clique em um evento para editar.</div>
       </div>
       <div class="header-actions">
+        <button class="view-actions-toggle no-print" id="toggle-actions-agenda" onclick="toggleActionsView(this)" title="Mostrar/ocultar ações de planejamento">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 12l2 2 4-4"/></svg>
+          Ações
+        </button>
         <button class="btn btn-outline" onclick="document.getElementById('agenda-grid').classList.toggle('hide-photos')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg> Alternar Imagens
         </button>
@@ -1354,6 +1405,10 @@ tbody tr:hover{background:var(--gray-50)}
         <div class="view-subtitle">Eventos posicionados na faixa horária do dia.</div>
       </div>
       <div class="header-actions">
+        <button class="view-actions-toggle no-print" id="toggle-actions-gantt" onclick="toggleActionsView(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 12l2 2 4-4"/></svg>
+          Ações
+        </button>
         <button class="btn btn-outline" onclick="window.ganttSequential = !window.ganttSequential; renderGantt();">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg> Alternar Modo
         </button>
@@ -1392,6 +1447,10 @@ tbody tr:hover{background:var(--gray-50)}
         <div class="view-subtitle">Sequência cronológica em formato vertical.</div>
       </div>
       <div class="header-actions">
+        <button class="view-actions-toggle no-print" id="toggle-actions-timeline" onclick="toggleActionsView(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 12l2 2 4-4"/></svg>
+          Ações
+        </button>
         <button class="btn btn-outline" onclick="document.getElementById('timeline').classList.toggle('layout-horizontal');">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18"/></svg> Alternar Modo
         </button>
@@ -1409,6 +1468,10 @@ tbody tr:hover{background:var(--gray-50)}
         <div class="view-subtitle">Tabela completa, filtrável e ordenável.</div>
       </div>
       <div class="header-actions">
+        <button class="view-actions-toggle no-print" id="toggle-actions-list" onclick="toggleActionsView(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 12l2 2 4-4"/></svg>
+          Ações
+        </button>
         <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
       </div>
     </div>
@@ -1460,7 +1523,7 @@ tbody tr:hover{background:var(--gray-50)}
         <div class="view-subtitle">Cadastro de pessoas externas que vão participar. Todos os campos são opcionais.</div>
       </div>
       <div class="header-actions">
-        <button class="btn btn-primary" onclick="openParticipantModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Adicionar terceiro</button>
+        <button class="btn btn-primary" onclick="requireAuth(openParticipantModal)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Adicionar terceiro</button>
         <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
       </div>
     </div>
@@ -1557,7 +1620,112 @@ tbody tr:hover{background:var(--gray-50)}
     </div>
   </section>
 
+  <!-- ===== PLANNING ===== -->
+  <section id="view-planning" class="view">
+    <div class="view-header">
+      <div>
+        <div class="view-title">Planejamento de ações</div>
+        <div class="view-subtitle">Controle de tarefas para a realização do evento. Ações podem ser vinculadas a eventos do cronograma.</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" onclick="requireAuth(openActionModal)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px"><path d="M12 5v14M5 12h14"/></svg>
+          Nova ação
+        </button>
+      </div>
+    </div>
+    <div id="planning-stats" class="stats-row"></div>
+    <div class="planning-table-wrap">
+      <table id="planning-table">
+        <thead>
+          <tr>
+            <th style="width:44px">Status</th>
+            <th>O que</th>
+            <th>Quem</th>
+            <th>Quando</th>
+            <th>Evento vinculado</th>
+            <th class="text-right no-print">Ações</th>
+          </tr>
+        </thead>
+        <tbody id="planning-body"></tbody>
+      </table>
+    </div>
+  </section>
+
 </main>
+
+<!-- ====== PASSWORD MODAL ====== -->
+<div id="password-modal" class="modal-backdrop hidden">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-header">
+      <h3>🔒 Área restrita</h3>
+      <button class="btn btn-ghost btn-icon" onclick="closePasswordModal()" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom:14px;font-size:13px;color:var(--gray-600)">Digite a senha para desbloquear a edição do portal.</p>
+      <div class="form-row">
+        <label class="field-label" for="password-input">Senha</label>
+        <input type="password" id="password-input" placeholder="Digite a senha..." onkeydown="if(event.key==='Enter')checkPassword()">
+      </div>
+      <p id="password-error" style="color:var(--red);font-size:12px;margin-top:8px;display:none">Senha incorreta. Tente novamente.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closePasswordModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="checkPassword()">Desbloquear</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== ACTION MODAL ====== -->
+<div id="action-modal" class="modal-backdrop hidden">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-header">
+      <h3 id="action-modal-title">Nova ação</h3>
+      <button class="btn btn-ghost btn-icon" onclick="closeActionModal()" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="action-form" onsubmit="event.preventDefault();saveAction()">
+        <input type="hidden" id="action-id">
+        <div class="form-grid">
+          <div class="form-row span-full">
+            <label class="field-label" for="action-what">O que <span class="required">*</span></label>
+            <input type="text" id="action-what" required maxlength="200" placeholder="Descreva a ação a realizar">
+          </div>
+          <div class="form-row">
+            <label class="field-label" for="action-who">Quem</label>
+            <input type="text" id="action-who" maxlength="100" placeholder="Responsável">
+          </div>
+          <div class="form-row">
+            <label class="field-label" for="action-when">Quando</label>
+            <input type="date" id="action-when">
+          </div>
+          <div class="form-row span-full">
+            <label class="field-label" for="action-event">Evento vinculado (opcional)</label>
+            <select id="action-event">
+              <option value="">— nenhum —</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label class="field-label">Status</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+              <input type="checkbox" id="action-done" style="width:18px;height:18px;accent-color:var(--red)">
+              Concluída
+            </label>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-danger" id="action-delete-btn" style="display:none" onclick="deleteCurrentAction()">Excluir</button>
+          <button type="button" class="btn" onclick="closeActionModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <!-- ====== EVENT MODAL ====== -->
 <div id="event-modal" class="modal-backdrop hidden">
@@ -1781,31 +1949,93 @@ const TYPE_COLORS = {
   premiacao:'#c0392b', outro:'#aaa'
 };
 
-let state = {events:[], participants:[]};
+let state = {events:[], participants:[], actions:[]};
 let listSort = {field:'date', dir:'asc'};
 let currentEventDetailId = null;
+let showActionsInViews = false;
+
+/* ============================================================
+   PASSWORD / AUTH
+   ============================================================ */
+const APP_PASSWORD = 'SESMTRH';
+let _authUnlocked = false;
+let _pendingCallback = null;
+
+function requireAuth(callback){
+  if(_authUnlocked){ callback(); return; }
+  _pendingCallback = callback;
+  document.getElementById('password-input').value = '';
+  document.getElementById('password-error').style.display = 'none';
+  document.getElementById('password-modal').classList.remove('hidden');
+  setTimeout(()=>document.getElementById('password-input').focus(),50);
+}
+function checkPassword(){
+  const val = document.getElementById('password-input').value;
+  if(val === APP_PASSWORD){
+    _authUnlocked = true;
+    updateLockUI();
+    document.getElementById('password-modal').classList.add('hidden');
+    if(_pendingCallback){ _pendingCallback(); _pendingCallback = null; }
+  } else {
+    document.getElementById('password-error').style.display = 'block';
+    document.getElementById('password-input').focus();
+  }
+}
+function closePasswordModal(){
+  document.getElementById('password-modal').classList.add('hidden');
+  _pendingCallback = null;
+}
+function toggleLock(){
+  if(_authUnlocked){
+    _authUnlocked = false;
+    updateLockUI();
+  } else {
+    requireAuth(()=>{});
+  }
+}
+function updateLockUI(){
+  const btn = document.getElementById('lock-btn');
+  const icon = document.getElementById('lock-icon');
+  const label = document.getElementById('lock-label');
+  if(_authUnlocked){
+    btn.classList.add('unlocked');
+    icon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>';
+    label.textContent = 'Desbloqueado';
+  } else {
+    btn.classList.remove('unlocked');
+    icon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>';
+    label.textContent = 'Bloqueado';
+  }
+}
 
 function uid(){return 'id_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7)}
 async function load(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw){state = JSON.parse(raw); renderAll();}
+    if(raw){ state = JSON.parse(raw); if(!state.actions) state.actions=[]; renderAll(); }
   }catch(e){console.warn('local load failed', e)}
   if(!state.events) state.events = [];
   if(!state.participants) state.participants = [];
+  if(!state.actions) state.actions = [];
 
   try {
-    const [evsRes, ptsRes] = await Promise.all([
+    const [evsRes, ptsRes, actRes] = await Promise.all([
       supabaseClient.from('events').select('*'),
-      supabaseClient.from('participants').select('*')
+      supabaseClient.from('participants').select('*'),
+      supabaseClient.from('actions').select('*')
     ]);
     if(evsRes.error) throw evsRes.error;
     if(ptsRes.error) throw ptsRes.error;
+    if(actRes.error) throw actRes.error;
 
     if (evsRes.data.length > 0 || ptsRes.data.length > 0) {
         state.events = evsRes.data.map(r => ({ id: r.id, ...r.data }));
         state.participants = ptsRes.data.map(r => ({ id: r.id, ...r.data }));
+        state.actions = actRes.data.map(r => ({ id: r.id, ...r.data }));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        renderAll();
+    } else if(actRes.data.length > 0){
+        state.actions = actRes.data.map(r => ({ id: r.id, ...r.data }));
         renderAll();
     }
   } catch(e) {
@@ -1831,10 +2061,155 @@ function save(){
            return { id, data };
          }));
       }
+      if(state.actions.length > 0) {
+         await supabaseClient.from('actions').upsert(state.actions.map(a => {
+           const { id, ...data } = a;
+           return { id, data };
+         }));
+      }
     } catch(e) {
       console.error('Supabase sync failed', e);
     }
   }, 1000);
+}
+
+/* ============================================================
+   ACTIONS TOGGLE IN VIEWS
+   ============================================================ */
+function toggleActionsView(btn){
+  showActionsInViews = !showActionsInViews;
+  document.querySelectorAll('.view-actions-toggle').forEach(b=>{
+    b.classList.toggle('active', showActionsInViews);
+    b.querySelector('svg + *') ? null : null;
+    const textNode = [...b.childNodes].find(n=>n.nodeType===3);
+    if(textNode) textNode.textContent = showActionsInViews ? ' Ocultar ações' : ' Ações';
+  });
+  renderAll();
+}
+function actionsForEvent(eventId){
+  return state.actions.filter(a=>a.eventId===eventId);
+}
+function actionsChipsHTML(eventId){
+  if(!showActionsInViews) return '';
+  const acts = actionsForEvent(eventId);
+  if(!acts.length) return '';
+  return '<div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:2px">' +
+    acts.map(a=>`<span class="action-chip ${a.done?'done':''}" title="${escapeHTML(a.who||'')} · ${a.when||'s/d'}">${escapeHTML(a.what)}</span>`).join('') +
+  '</div>';
+}
+
+/* ============================================================
+   RENDER: PLANNING
+   ============================================================ */
+function renderPlanning(){
+  const stats = document.getElementById('planning-stats');
+  const total = state.actions.length;
+  const done = state.actions.filter(a=>a.done).length;
+  const pending = total - done;
+  stats.innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total de ações</div><div class="stat-value">${total}</div></div>
+    <div class="stat-card accent"><div class="stat-label">Concluídas</div><div class="stat-value">${done}</div></div>
+    <div class="stat-card"><div class="stat-label">Pendentes</div><div class="stat-value">${pending}</div></div>
+  `;
+  const tbody = document.getElementById('planning-body');
+  if(!total){
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--gray-500)">Nenhuma ação cadastrada. Clique em "Nova ação" para começar.</td></tr>`;
+    return;
+  }
+  const sorted = [...state.actions].sort((a,b)=>{
+    if(!a.when && !b.when) return 0;
+    if(!a.when) return 1;
+    if(!b.when) return -1;
+    return a.when.localeCompare(b.when);
+  });
+  tbody.innerHTML = sorted.map(a=>{
+    const ev = a.eventId ? state.events.find(e=>e.id===a.eventId) : null;
+    const evLabel = ev ? `<span class="tag">${escapeHTML(ev.title)}</span>` : '<span class="muted">—</span>';
+    const dateLabel = a.when ? fmtTaskDate(a.when) : '<span class="muted">—</span>';
+    return `<tr onclick="requireAuth(()=>openActionModal('${a.id}'))" style="cursor:pointer">
+      <td style="text-align:center">
+        <input type="checkbox" ${a.done?'checked':''} onclick="event.stopPropagation();toggleActionDone('${a.id}',this.checked)" style="width:18px;height:18px;accent-color:var(--red);cursor:pointer">
+      </td>
+      <td><strong style="${a.done?'text-decoration:line-through;color:var(--gray-500)':''};">${escapeHTML(a.what)}</strong></td>
+      <td>${escapeHTML(a.who||'')}</td>
+      <td>${dateLabel}</td>
+      <td>${evLabel}</td>
+      <td class="text-right no-print">
+        <button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();requireAuth(()=>openActionModal('${a.id}'))">Editar</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function toggleActionDone(id, done){
+  const a = state.actions.find(x=>x.id===id);
+  if(!a) return;
+  a.done = done;
+  save();
+  renderPlanning();
+}
+
+/* ============================================================
+   ACTION MODAL
+   ============================================================ */
+function openActionModal(id){
+  const form = document.getElementById('action-form');
+  form.reset();
+  // populate event dropdown
+  const sel = document.getElementById('action-event');
+  sel.innerHTML = '<option value="">— nenhum —</option>' +
+    sortedEvents().map(e=>`<option value="${e.id}">${fmtDayShort(e.date)} ${e.startTime} — ${escapeHTML(e.title)}</option>`).join('');
+
+  if(id){
+    const a = state.actions.find(x=>x.id===id);
+    if(!a) return;
+    document.getElementById('action-modal-title').textContent = 'Editar ação';
+    document.getElementById('action-id').value = a.id;
+    document.getElementById('action-what').value = a.what||'';
+    document.getElementById('action-who').value = a.who||'';
+    document.getElementById('action-when').value = a.when||'';
+    document.getElementById('action-event').value = a.eventId||'';
+    document.getElementById('action-done').checked = !!a.done;
+    document.getElementById('action-delete-btn').style.display = '';
+  } else {
+    document.getElementById('action-modal-title').textContent = 'Nova ação';
+    document.getElementById('action-id').value = '';
+    document.getElementById('action-delete-btn').style.display = 'none';
+  }
+  document.getElementById('action-modal').classList.remove('hidden');
+  setTimeout(()=>document.getElementById('action-what').focus(),50);
+}
+function closeActionModal(){
+  document.getElementById('action-modal').classList.add('hidden');
+}
+function saveAction(){
+  const id = document.getElementById('action-id').value;
+  const data = {
+    what: document.getElementById('action-what').value.trim(),
+    who: document.getElementById('action-who').value.trim(),
+    when: document.getElementById('action-when').value,
+    eventId: document.getElementById('action-event').value || null,
+    done: document.getElementById('action-done').checked
+  };
+  if(!data.what) return;
+  if(id){
+    const idx = state.actions.findIndex(a=>a.id===id);
+    if(idx>=0) state.actions[idx] = {...data, id};
+  } else {
+    state.actions.push({...data, id:uid()});
+  }
+  save();
+  renderPlanning();
+  closeActionModal();
+}
+async function deleteCurrentAction(){
+  const id = document.getElementById('action-id').value;
+  if(!id) return;
+  if(!confirm('Excluir esta ação permanentemente?')) return;
+  state.actions = state.actions.filter(a=>a.id!==id);
+  save();
+  try { await supabaseClient.from('actions').delete().eq('id',id); } catch(e){}
+  renderPlanning();
+  closeActionModal();
 }
 
 /* ============================================================
@@ -1929,7 +2304,7 @@ function renderAgenda(){
           ${events.length===0
             ? 'sem eventos'
             : events.map(e=>`
-              <div class="event-card type-${e.type}" onclick="openEventModal('${e.id}')">
+              <div class="event-card type-${e.type}" onclick="requireAuth(()=>openEventModal('${e.id}'))">
                 ${e.photo?`<div class="event-photo-banner" style="background-image:url('${e.photo}')"></div>`:''}
                 <div class="ec-time">${escapeHTML(e.startTime)} – ${escapeHTML(e.endTime)}</div>
                 <div class="ec-title">${escapeHTML(e.title)}</div>
@@ -1938,6 +2313,7 @@ function renderAgenda(){
                   ${e.location?`<span>📍 ${escapeHTML(e.location)}</span>`:''}
                   ${e.responsibleName?`<span>👤 ${escapeHTML(e.responsibleName)}</span>`:''}
                 </div>
+                ${actionsChipsHTML(e.id)}
               </div>
             `).join('')}
         </div>
@@ -2850,7 +3226,7 @@ function importJSON(ev){
       const data = JSON.parse(e.target.result);
       if(!data.events || !Array.isArray(data.events)) throw new Error('Formato inválido');
       if(!confirm(`Importar ${data.events.length} evento(s) e ${(data.participants||[]).length} terceiro(s)? Os dados atuais serão substituídos.`)) return;
-      state = {events:data.events, participants:data.participants||[]};
+      state = {events:data.events, participants:data.participants||[], actions:data.actions||[]};
       save();
       renderAll();
       alert('Importação concluída.');
@@ -2862,13 +3238,15 @@ function importJSON(ev){
 async function clearAll(){
   if(!confirm('Tem certeza? Isso apagará TODOS os eventos e terceiros cadastrados.')) return;
   if(!confirm('Confirmar novamente: esta ação não pode ser desfeita.')) return;
-  state = {events:[], participants:[]};
+  state = {events:[], participants:[], actions:[]};
   save();
   try {
     const evs = await supabaseClient.from('events').select('id');
     if(evs.data && evs.data.length) await supabaseClient.from('events').delete().in('id', evs.data.map(d=>d.id));
     const pts = await supabaseClient.from('participants').select('id');
     if(pts.data && pts.data.length) await supabaseClient.from('participants').delete().in('id', pts.data.map(d=>d.id));
+    const acts = await supabaseClient.from('actions').select('id');
+    if(acts.data && acts.data.length) await supabaseClient.from('actions').delete().in('id', acts.data.map(d=>d.id));
   }catch(e){}
   renderAll();
 }
@@ -2887,6 +3265,7 @@ function renderAll(){
   renderEventDetail();
   renderParticipants();
   renderManage();
+  renderPlanning();
 }
 
 /* ============================================================
@@ -2897,6 +3276,8 @@ document.addEventListener('keydown',e=>{
     if(!document.getElementById('event-modal').classList.contains('hidden')) closeEventModal();
     if(!document.getElementById('participant-modal').classList.contains('hidden')) closeParticipantModal();
     if(!document.getElementById('print-modal').classList.contains('hidden')) closePrintModal();
+    if(!document.getElementById('password-modal').classList.contains('hidden')) closePasswordModal();
+    if(!document.getElementById('action-modal').classList.contains('hidden')) closeActionModal();
   }
 });
 
@@ -2944,7 +3325,7 @@ function printView(name){
    on the backdrop itself; prevents accidental close from drags,
    text selection, or sub-pixel movement that ends on backdrop)
    ============================================================ */
-['event-modal','participant-modal','print-modal'].forEach(id=>{
+['event-modal','participant-modal','print-modal','password-modal','action-modal'].forEach(id=>{
   const bd = document.getElementById(id);
   if(!bd) return;
   let mdOnBackdrop = false;
