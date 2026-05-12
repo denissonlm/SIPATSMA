@@ -1704,10 +1704,8 @@ tbody tr:hover{background:var(--gray-50)}
             <input type="date" id="action-when">
           </div>
           <div class="form-row span-full">
-            <label class="field-label" for="action-event">Evento vinculado (opcional)</label>
-            <select id="action-event">
-              <option value="">— nenhum —</option>
-            </select>
+            <label class="field-label">Eventos vinculados (opcional)</label>
+            <div id="action-events-list" class="picker-container" style="max-height:160px"></div>
           </div>
           <div class="form-row">
             <label class="field-label">Status</label>
@@ -2032,6 +2030,11 @@ async function load(){
         state.events = evsRes.data.map(r => ({ id: r.id, ...r.data }));
         state.participants = ptsRes.data.map(r => ({ id: r.id, ...r.data }));
         state.actions = actRes.data.map(r => ({ id: r.id, ...r.data }));
+        // Migração: Converter eventId (string) para eventIds (array)
+        state.actions.forEach(a => {
+          if(a.eventId && !a.eventIds) { a.eventIds = [a.eventId]; delete a.eventId; }
+          if(!a.eventIds) a.eventIds = [];
+        });
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         renderAll();
     } else if(actRes.data.length > 0){
@@ -2116,7 +2119,7 @@ function toggleActionsView(btn){
   renderAll();
 }
 function actionsForEvent(eventId){
-  return state.actions.filter(a=>a.eventId===eventId);
+  return state.actions.filter(a=>(a.eventIds||[]).includes(eventId));
 }
 function actionsChipsHTML(eventId){
   if(!showActionsInViews) return '';
@@ -2152,8 +2155,11 @@ function renderPlanning(){
     return a.when.localeCompare(b.when);
   });
   tbody.innerHTML = sorted.map(a=>{
-    const ev = a.eventId ? state.events.find(e=>e.id===a.eventId) : null;
-    const evLabel = ev ? `<span class="tag">${escapeHTML(ev.title)}</span>` : '<span class="muted">—</span>';
+    const evIds = a.eventIds || [];
+    const evLabels = evIds.map(eid => {
+        const ev = state.events.find(e => e.id === eid);
+        return ev ? `<span class="tag" style="margin-right:2px">${escapeHTML(ev.title)}</span>` : '';
+    }).join('') || '<span class="muted">—</span>';
     const dateLabel = a.when ? fmtTaskDate(a.when) : '<span class="muted">—</span>';
     return `<tr onclick="requireAuth(()=>openActionModal('${a.id}'))" style="cursor:pointer">
       <td style="text-align:center">
@@ -2162,7 +2168,7 @@ function renderPlanning(){
       <td><strong style="${a.done?'text-decoration:line-through;color:var(--gray-500)':''};">${escapeHTML(a.what)}</strong></td>
       <td>${escapeHTML(a.who||'')}</td>
       <td>${dateLabel}</td>
-      <td>${evLabel}</td>
+      <td><div style="display:flex;flex-wrap:wrap;gap:2px">${evLabels}</div></td>
       <td class="text-right no-print">
         <button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();requireAuth(()=>openActionModal('${a.id}'))">Editar</button>
       </td>
@@ -2183,20 +2189,34 @@ function toggleActionDone(id, done){
 function openActionModal(id){
   const form = document.getElementById('action-form');
   form.reset();
-  // populate event dropdown
-  const sel = document.getElementById('action-event');
-  sel.innerHTML = '<option value="">— nenhum —</option>' +
-    sortedEvents().map(e=>`<option value="${e.id}">${fmtDayShort(e.date)} ${e.startTime} — ${escapeHTML(e.title)}</option>`).join('');
-
+  
+  let currentEventIds = [];
+  let a = null;
   if(id){
-    const a = state.actions.find(x=>x.id===id);
+    a = state.actions.find(x=>x.id===id);
     if(!a) return;
+    currentEventIds = a.eventIds || [];
+  }
+
+  // populate events list checkboxes
+  const list = document.getElementById('action-events-list');
+  if(state.events.length===0){
+    list.innerHTML = '<div class="picker-empty">Nenhum evento cadastrado.</div>';
+  } else {
+    list.innerHTML = sortedEvents().map(e=>`
+      <label style="display:flex;align-items:center;gap:8px;padding:4px 0;cursor:pointer">
+        <input type="checkbox" value="${e.id}" ${currentEventIds.includes(e.id)?'checked':''}>
+        <span style="font-size:12px">${fmtDayShort(e.date)} ${e.startTime} — ${escapeHTML(e.title)}</span>
+      </label>
+    `).join('');
+  }
+
+  if(a){
     document.getElementById('action-modal-title').textContent = 'Editar ação';
     document.getElementById('action-id').value = a.id;
     document.getElementById('action-what').value = a.what||'';
     document.getElementById('action-who').value = a.who||'';
     document.getElementById('action-when').value = a.when||'';
-    document.getElementById('action-event').value = a.eventId||'';
     document.getElementById('action-done').checked = !!a.done;
     document.getElementById('action-delete-btn').style.display = '';
   } else {
@@ -2212,11 +2232,12 @@ function closeActionModal(){
 }
 function saveAction(){
   const id = document.getElementById('action-id').value;
+  const selectedEventIds = [...document.querySelectorAll('#action-events-list input[type=checkbox]:checked')].map(c=>c.value);
   const data = {
     what: document.getElementById('action-what').value.trim(),
     who: document.getElementById('action-who').value.trim(),
     when: document.getElementById('action-when').value,
-    eventId: document.getElementById('action-event').value || null,
+    eventIds: selectedEventIds,
     done: document.getElementById('action-done').checked
   };
   if(!data.what) return;
@@ -3066,20 +3087,29 @@ function saveEvent(){
     }
 
     // Sincronizar Ações (Tasks) com state.actions
-    state.actions = state.actions.filter(a => a.eventId !== savedEventId || tasks.some(t => t.id === a.id));
+    // 1. Desvincular ações que foram removidas deste evento no modal
+    state.actions.forEach(a => {
+        if((a.eventIds||[]).includes(savedEventId) && !tasks.some(t => t.id === a.id)){
+            a.eventIds = a.eventIds.filter(eid => eid !== savedEventId);
+        }
+    });
+
+    // 2. Atualizar ou Adicionar novas
     tasks.forEach(t => {
       const existingIdx = state.actions.findIndex(a => a.id === t.id);
       const actionData = {
         what: t.text,
         who: t.responsible,
         when: t.date,
-        done: t.done,
-        eventId: savedEventId
+        done: t.done
       };
       if(existingIdx >= 0){
-        state.actions[existingIdx] = { ...state.actions[existingIdx], ...actionData };
+        const a = state.actions[existingIdx];
+        if(!a.eventIds) a.eventIds = [];
+        if(!a.eventIds.includes(savedEventId)) a.eventIds.push(savedEventId);
+        state.actions[existingIdx] = { ...a, ...actionData };
       } else {
-        state.actions.push({ id: t.id, ...actionData });
+        state.actions.push({ id: t.id, ...actionData, eventIds: [savedEventId] });
       }
     });
 
