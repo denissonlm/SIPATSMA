@@ -2038,6 +2038,31 @@ async function load(){
         state.actions = actRes.data.map(r => ({ id: r.id, ...r.data }));
         renderAll();
     }
+    // Migração: Se existirem tasks dentro dos eventos, converter para ações vinculadas
+    let migrated = false;
+    state.events.forEach(e => {
+      if(e.tasks && e.tasks.length > 0){
+        e.tasks.forEach(t => {
+          // Se essa task ainda não existe como ação vinculada
+          if(!state.actions.some(a => a.id === t.id)){
+            state.actions.push({
+              id: t.id || uid(),
+              what: t.text || '',
+              who: t.responsible || '',
+              when: t.date || '',
+              done: !!t.done,
+              eventId: e.id
+            });
+            migrated = true;
+          }
+        });
+        delete e.tasks; // Remove do objeto do evento para não duplicar
+        migrated = true;
+      }
+    });
+    if(migrated) save();
+    
+    renderAll();
   } catch(e) {
     console.warn('supabase load failed', e);
   }
@@ -2237,13 +2262,7 @@ function fmtTaskDate(iso){
   return `${d}/${m}/${y}`;
 }
 function toggleTaskDone(eventId, taskId, done){
-  const e = state.events.find(x=>x.id===eventId);
-  if(!e||!e.tasks) return;
-  const t = e.tasks.find(x=>x.id===taskId);
-  if(!t) return;
-  t.done = !!done;
-  save();
-  renderEventDetail();
+  toggleActionDone(taskId, done);
 }
 
 /* ============================================================
@@ -2683,29 +2702,31 @@ function renderEventDetail(){
           <div class="detail-field"><div class="df-label">Inscritos</div><div class="df-value">${enrolled.length}${e.capacity!=null?` / ${e.capacity}`:''}</div></div>
         </div>
         ${e.description?`<div class="description">${escapeHTML(e.description)}</div>`:''}
-        ${(e.tasks&&e.tasks.length>0)?(()=>{
-          const doneCount = e.tasks.filter(t=>t.done).length;
-          const total = e.tasks.length;
+        ${(()=>{
+          const eventActions = state.actions.filter(a => a.eventId === e.id);
+          if(eventActions.length === 0) return '';
+          const doneCount = eventActions.filter(t=>t.done).length;
+          const total = eventActions.length;
           const complete = doneCount===total;
           return `<div class="event-checklist">
             <h4>Checklist de tarefas <span class="progress ${complete?'complete':''}">${doneCount}/${total}${complete?' · concluído':''}</span></h4>
             <ul>
-              ${e.tasks.map(t=>`
+              ${eventActions.map(t=>`
                 <li class="${t.done?'done':'pending'}">
                   <label class="task-line">
-                    <input type="checkbox" ${t.done?'checked':''} onchange="toggleTaskDone('${e.id}','${t.id}',this.checked)">
-                    <span class="task-text">${escapeHTML(t.text||'(sem descrição)')}</span>
+                    <input type="checkbox" ${t.done?'checked':''} onchange="toggleActionDone('${t.id}',this.checked)">
+                    <span class="task-text">${escapeHTML(t.what||'(sem descrição)')}</span>
                     <span class="task-badge ${t.done?'done':'pending'}">${t.done?'Concluída':'Pendente'}</span>
                   </label>
-                  ${(t.responsible||t.date)?`<div class="task-meta">
-                    ${t.responsible?`<span>👤 ${escapeHTML(t.responsible)}</span>`:''}
-                    ${t.date?`<span>📅 ${fmtTaskDate(t.date)}</span>`:''}
+                  ${(t.who||t.when)?`<div class="task-meta">
+                    ${t.who?`<span>👤 ${escapeHTML(t.who)}</span>`:''}
+                    ${t.when?`<span>📅 ${fmtTaskDate(t.when)}</span>`:''}
                   </div>`:''}
                 </li>
               `).join('')}
             </ul>
           </div>`;
-        })():''}
+        })()}
         <div class="enrolled-list">
           <h4>Terceiros inscritos (${enrolled.length})</h4>
           ${enrolled.length===0
@@ -2806,7 +2827,14 @@ function _openEventModalCore(data, isEdit){
     document.getElementById('event-resp-sector').value = data.responsibleSector||'';
     document.getElementById('event-description').value = data.description||'';
     photo = data.photo||null;
-    currentModalTasks = (data.tasks||[]).map(t=>({...t}));
+    // Carregar ações vinculadas a este evento para o modal
+    currentModalTasks = state.actions.filter(a => a.eventId === data.id).map(a => ({
+      id: a.id,
+      text: a.what,
+      responsible: a.who,
+      date: a.when,
+      done: !!a.done
+    }));
     document.getElementById('event-delete-btn').style.display = isEdit ? '' : 'none';
     document.getElementById('event-duplicate-btn').style.display = isEdit ? '' : 'none';
   }else{
@@ -2846,7 +2874,14 @@ function duplicateEvent(id){
   const clone = JSON.parse(JSON.stringify(orig));
   clone.id = '';
   clone.title = (clone.title||'') + ' (cópia)';
-  if(clone.tasks) clone.tasks = clone.tasks.map(t=>({...t, id:uid(), done:false}));
+  // Clonar ações também
+  currentModalTasks = state.actions.filter(a => a.eventId === id).map(a => ({
+      id: uid(),
+      text: a.what,
+      responsible: a.who,
+      date: a.when,
+      done: false
+  }));
   _openEventModalCore(clone, false);
 }
 
@@ -2867,8 +2902,8 @@ function duplicateCurrentEvent(){
     responsibleSector: document.getElementById('event-resp-sector').value,
     description: document.getElementById('event-description').value,
     photo: previewImg ? previewImg.src : null,
-    tasks: currentModalTasks.map(t=>({...t, id:uid(), done:false})),
   };
+  // As tarefas são copiadas para o currentModalTasks no _openEventModalCore ao abrir com clone
   _openEventModalCore(clone, false);
 }
 
@@ -2924,8 +2959,8 @@ function refreshResponsiblesDatalist(){
   const names = new Set();
   state.events.forEach(e=>{
     if(e.responsibleName) names.add(e.responsibleName.trim());
-    (e.tasks||[]).forEach(t=>{if(t.responsible) names.add(t.responsible.trim())});
   });
+  state.actions.forEach(a=>{if(a.who) names.add(a.who.trim())});
   state.participants.forEach(p=>{if(p.name) names.add(p.name.trim())});
   const dlNames = document.getElementById('responsibles-names-datalist');
   if(dlNames) dlNames.innerHTML = [...names].filter(Boolean).sort((a,b)=>a.localeCompare(b,'pt-BR')).map(n=>`<option value="${escapeHTML(n)}">`).join('');
@@ -3014,7 +3049,6 @@ function saveEvent(){
     responsibleSector: document.getElementById('event-resp-sector').value.trim(),
     description: document.getElementById('event-description').value.trim(),
     photo: previewImg ? previewImg.src : null,
-    tasks: tasks,
   };
   if(timeToMinutes(data.endTime) <= timeToMinutes(data.startTime)){
     alert('A hora final deve ser maior que a hora inicial.');
@@ -3030,12 +3064,30 @@ function saveEvent(){
       savedEventId = uid();
       state.events.push({id:savedEventId, ...data});
     }
-    // bidirectional sync with terceiros checkboxes
-    const checked = new Set([...document.querySelectorAll('#event-participants-list input[type=checkbox]:checked')].map(c=>c.value));
+
+    // Sincronizar Ações (Tasks) com state.actions
+    state.actions = state.actions.filter(a => a.eventId !== savedEventId || tasks.some(t => t.id === a.id));
+    tasks.forEach(t => {
+      const existingIdx = state.actions.findIndex(a => a.id === t.id);
+      const actionData = {
+        what: t.text,
+        who: t.responsible,
+        when: t.date,
+        done: t.done,
+        eventId: savedEventId
+      };
+      if(existingIdx >= 0){
+        state.actions[existingIdx] = { ...state.actions[existingIdx], ...actionData };
+      } else {
+        state.actions.push({ id: t.id, ...actionData });
+      }
+    });
+
+    const selectedPartIds = [...document.querySelectorAll('#event-participants-list input[type=checkbox]:checked')].map(c=>c.value);
     state.participants.forEach(p=>{
       const enrolled = p.enrolledEvents||[];
       const has = enrolled.includes(savedEventId);
-      const shouldHave = checked.has(p.id);
+      const shouldHave = selectedPartIds.includes(p.id);
       if(shouldHave && !has) p.enrolledEvents = [...enrolled, savedEventId];
       else if(!shouldHave && has) p.enrolledEvents = enrolled.filter(eid=>eid!==savedEventId);
     });
