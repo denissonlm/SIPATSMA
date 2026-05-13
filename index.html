@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SIPATSMA 2026 — Grupo Açotubo</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <style>
 :root{
   --red:#c0392b;
@@ -1065,6 +1066,24 @@ tbody tr:hover{background:var(--gray-50)}
 .view-actions-toggle:hover{background:var(--gray-50)}
 .view-actions-toggle.active{background:#e3f0ff;border-color:#90caf9;color:#1565c0}
 
+.drag-handle{
+  cursor:grab;
+  color:var(--gray-400);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:24px;
+  height:24px;
+  transition:var(--transition);
+}
+.drag-handle:hover{color:var(--red)}
+.drag-handle:active{cursor:grabbing}
+.sortable-ghost{opacity:0.4;background:var(--gray-100)}
+.sortable-chosen{background:var(--gray-50)}
+.planning-table th[data-sort]{cursor:pointer;user-select:none}
+.planning-table th[data-sort]:hover{color:var(--black);background:var(--gray-200)}
+.planning-table th .sort-arrow{font-size:9px;opacity:.5;margin-left:4px}
+
 /* ====== ANIMATIONS ====== */
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -1636,13 +1655,14 @@ tbody tr:hover{background:var(--gray-50)}
     </div>
     <div id="planning-stats" class="stats-row"></div>
     <div class="planning-table-wrap">
-      <table id="planning-table">
+      <table id="planning-table" class="planning-table">
         <thead>
           <tr>
-            <th style="width:44px">Status</th>
-            <th>O que</th>
-            <th>Quem</th>
-            <th>Quando</th>
+            <th style="width:40px" class="no-print"></th>
+            <th style="width:80px" data-sort="done">Status <span class="sort-arrow">▲▼</span></th>
+            <th data-sort="what">O que <span class="sort-arrow">▲▼</span></th>
+            <th data-sort="who">Quem <span class="sort-arrow">▲▼</span></th>
+            <th data-sort="when">Quando <span class="sort-arrow">▲▼</span></th>
             <th>Evento vinculado</th>
             <th class="text-right no-print">Ações</th>
           </tr>
@@ -1949,8 +1969,10 @@ const TYPE_COLORS = {
 
 let state = {events:[], participants:[], actions:[]};
 let listSort = {field:'date', dir:'asc'};
+let planningSort = {field:'order', dir:'asc'};
 let currentEventDetailId = null;
 let showActionsInViews = false;
+let planningSortable = null;
 
 /* ============================================================
    PASSWORD / AUTH
@@ -2145,15 +2167,25 @@ function renderPlanning(){
   `;
   const tbody = document.getElementById('planning-body');
   if(!total){
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--gray-500)">Nenhuma ação cadastrada. Clique em "Nova ação" para começar.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--gray-500)">Nenhuma ação cadastrada. Clique em "Nova ação" para começar.</td></tr>`;
     return;
   }
+
+  // Ensure actions have an order property
+  state.actions.forEach((a, i) => { if (a.order === undefined) a.order = i; });
+
   const sorted = [...state.actions].sort((a,b)=>{
-    if(!a.when && !b.when) return 0;
-    if(!a.when) return 1;
-    if(!b.when) return -1;
-    return a.when.localeCompare(b.when);
+    const f = planningSort.field;
+    if (f === 'order') {
+      return planningSort.dir === 'asc' ? a.order - b.order : b.order - a.order;
+    }
+    const av = (a[f]||'').toString().toLowerCase();
+    const bv = (b[f]||'').toString().toLowerCase();
+    if(av<bv) return planningSort.dir==='asc'?-1:1;
+    if(av>bv) return planningSort.dir==='asc'?1:-1;
+    return a.order - b.order;
   });
+
   tbody.innerHTML = sorted.map(a=>{
     const evIds = a.eventIds || [];
     const evLabels = evIds.map(eid => {
@@ -2161,7 +2193,15 @@ function renderPlanning(){
         return ev ? `<span class="tag" style="margin-right:2px">${escapeHTML(ev.title)}</span>` : '';
     }).join('') || '<span class="muted">—</span>';
     const dateLabel = a.when ? fmtTaskDate(a.when) : '<span class="muted">—</span>';
-    return `<tr onclick="requireAuth(()=>openActionModal('${a.id}'))" style="cursor:pointer">
+    return `<tr data-id="${a.id}" onclick="requireAuth(()=>openActionModal('${a.id}'))" style="cursor:pointer">
+      <td class="no-print" onclick="event.stopPropagation()">
+        <div class="drag-handle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
+            <circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/>
+            <circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/>
+          </svg>
+        </div>
+      </td>
       <td style="text-align:center">
         <input type="checkbox" ${a.done?'checked':''} onclick="event.stopPropagation();toggleActionDone('${a.id}',this.checked)" style="width:18px;height:18px;accent-color:var(--red);cursor:pointer">
       </td>
@@ -2174,6 +2214,51 @@ function renderPlanning(){
       </td>
     </tr>`;
   }).join('');
+
+  // Initialize Sortable
+  if (planningSortable) planningSortable.destroy();
+  planningSortable = new Sortable(tbody, {
+    handle: '.drag-handle',
+    animation: 150,
+    ghostClass: 'sortable-ghost',
+    chosenClass: 'sortable-chosen',
+    onEnd: function() {
+      updatePlanningOrder();
+    }
+  });
+}
+
+function updatePlanningOrder(){
+  const rows = document.querySelectorAll('#planning-body tr');
+  const newOrder = [];
+  rows.forEach((row, index) => {
+    const id = row.dataset.id;
+    const action = state.actions.find(a => a.id === id);
+    if (action) {
+      action.order = index;
+    }
+  });
+  // Se o usuário arrasta, forçamos a ordenação a ser 'order' 'asc'
+  planningSort = { field: 'order', dir: 'asc' };
+  save();
+  renderPlanning();
+}
+
+function onPlanningSort(field) {
+  if (planningSort.field === field) {
+    planningSort.dir = planningSort.dir === 'asc' ? 'desc' : 'asc';
+  } else {
+    planningSort.field = field;
+    planningSort.dir = 'asc';
+  }
+  renderPlanning();
+}
+
+// Add header listeners after renderAll or in a separate place
+function initPlanningSort() {
+  document.querySelectorAll('#planning-table th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => onPlanningSort(th.dataset.sort));
+  });
 }
 function toggleActionDone(id, done){
   const a = state.actions.find(x=>x.id===id);
@@ -3428,6 +3513,7 @@ function printView(name){
 });
 
 load();
+initPlanningSort();
 renderAll();
 // ensure first view is also marked as print-active
 document.getElementById('view-agenda').classList.add('print-active');
