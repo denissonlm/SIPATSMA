@@ -96,9 +96,9 @@ nav.tabs{
   padding:0 32px;
   display:flex;
   gap:4px;
-  overflow-x:auto;
   flex-shrink:0;
-  scrollbar-width:thin;
+  position:relative;
+  z-index:100;
 }
 nav.tabs::-webkit-scrollbar{height:4px}
 nav.tabs::-webkit-scrollbar-thumb{background:var(--gray-300)}
@@ -1020,6 +1020,31 @@ tbody tr:hover{background:var(--gray-50)}
 .legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gray-700)}
 .legend-swatch{width:12px;height:12px;border-radius:3px}
 
+/* ====== NAV DROPDOWN ====== */
+.nav-dropdown{position:relative;display:inline-block}
+.nav-dropdown-toggle{
+  background:none;border:none;padding:14px 16px;font-size:13px;font-weight:500;
+  color:var(--gray-600);cursor:pointer;border-bottom:3px solid transparent;
+  transition:var(--transition);white-space:nowrap;display:flex;align-items:center;gap:6px;
+}
+.nav-dropdown-toggle:hover{color:var(--black);background:var(--gray-50)}
+.nav-dropdown.active .nav-dropdown-toggle{color:var(--black);border-bottom-color:var(--red);font-weight:600}
+.nav-dropdown-content{
+  display:none;position:absolute;top:100%;left:0;background:var(--white);
+  min-width:200px;box-shadow:var(--shadow-lg);border:1px solid var(--gray-200);
+  border-radius:0 0 var(--radius) var(--radius);z-index:9999;
+}
+.nav-dropdown.open .nav-dropdown-content{display:block !important}
+.nav-dropdown-content button{
+  width:100%;text-align:left;padding:12px 16px;border:none;background:none;
+  font-size:13px;color:var(--gray-600);cursor:pointer;display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid var(--gray-50);
+}
+.nav-dropdown-content button:hover{background:var(--gray-50);color:var(--black)}
+.nav-dropdown-content button.active{color:var(--red);font-weight:600;background:var(--gray-50)}
+.dropdown-arrow{width:12px;height:12px;margin-left:2px;transition:transform 0.2s}
+.nav-dropdown.open .dropdown-arrow{transform:rotate(180deg)}
+
 /* ====== UTIL ====== */
 .row-actions{display:flex;gap:4px;justify-content:flex-end}
 .muted{color:var(--gray-500)}
@@ -1337,30 +1362,39 @@ tbody tr:hover{background:var(--gray-50)}
 </header>
 
 <nav class="tabs no-print" id="tabs">
-  <button data-view="agenda" class="active">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-    Agenda
-  </button>
-  <button data-view="gantt">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h10M3 10h14M3 16h8M3 22h12"/></svg>
-    Gantt
-  </button>
-  <button data-view="calendar">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
-    Calendário
-  </button>
-  <button data-view="timeline">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M5 6h14M5 12h14M5 18h14"/></svg>
-    Linha do tempo
-  </button>
-  <button data-view="list">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
-    Lista
-  </button>
-  <button data-view="event">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-    Por evento
-  </button>
+  <div class="nav-dropdown" id="cronograma-dropdown">
+    <button class="nav-dropdown-toggle" type="button" onclick="event.stopPropagation(); this.parentElement.classList.toggle('open')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Cronograma
+      <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="nav-dropdown-content">
+      <button data-view="agenda" onclick="this.closest('.nav-dropdown').classList.remove('open'); switchView('agenda')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Agenda
+      </button>
+      <button data-view="gantt" onclick="this.closest('.nav-dropdown').classList.remove('open'); switchView('gantt')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h10M3 10h14M3 16h8M3 22h12"/></svg>
+        Gantt
+      </button>
+      <button data-view="calendar" onclick="this.closest('.nav-dropdown').classList.remove('open'); switchView('calendar')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
+        Calendário
+      </button>
+      <button data-view="timeline" onclick="this.closest('.nav-dropdown').classList.remove('open'); switchView('timeline')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M5 6h14M5 12h14M5 18h14"/></svg>
+        Linha do tempo
+      </button>
+      <button data-view="list" onclick="this.closest('.nav-dropdown').classList.remove('open'); switchView('list')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+        Lista
+      </button>
+      <button data-view="event" onclick="this.closest('.nav-dropdown').classList.remove('open'); switchView('event')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        Por evento
+      </button>
+    </div>
+  </div>
   <button data-view="participants">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
     Terceiros
@@ -2038,14 +2072,23 @@ async function load(){
     if(ptsRes.error) throw ptsRes.error;
     if(actRes.error) throw actRes.error;
 
+    const parseRow = (r) => {
+      let data = r.data || r;
+      if (typeof data === 'string') {
+        try { data = JSON.parse(data); } catch(e) { console.error('Parse failed', r.id); }
+      }
+      return { id: r.id, ...data };
+    };
+
     if (evsRes.data.length > 0 || ptsRes.data.length > 0) {
-        state.events = evsRes.data.map(r => ({ id: r.id, ...r.data }));
-        state.participants = ptsRes.data.map(r => ({ id: r.id, ...r.data }));
-        state.actions = actRes.data.map(r => ({ id: r.id, ...r.data }));
+        state.events = evsRes.data.map(parseRow);
+        state.participants = ptsRes.data.map(parseRow);
+        state.actions = actRes.data.map(parseRow);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         renderAll();
     } else if(actRes.data.length > 0){
-        state.actions = actRes.data.map(r => ({ id: r.id, ...r.data }));
+        state.actions = actRes.data.map(parseRow);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         renderAll();
     }
     // Migração: Se existirem tasks dentro dos eventos, converter para ações vinculadas
@@ -2367,10 +2410,24 @@ function toggleTaskDone(eventId, taskId, done){
    TAB NAVIGATION
    ============================================================ */
 document.querySelectorAll('nav.tabs button').forEach(btn=>{
-  btn.addEventListener('click',()=>switchView(btn.dataset.view));
+  btn.addEventListener('click',()=>{
+    if(btn.dataset.view) switchView(btn.dataset.view);
+  });
 });
 function switchView(name){
   document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
+  
+  // Atualizar visual do dropdown "Cronograma"
+  const dd = document.getElementById('cronograma-dropdown');
+  if(dd){
+    const subViews = ['agenda','gantt','calendar','timeline','list','event'];
+    if(subViews.includes(name)){
+      dd.classList.add('active');
+    } else {
+      dd.classList.remove('active');
+    }
+  }
+
   document.querySelectorAll('.view').forEach(v=>{
     const active = v.id==='view-'+name;
     v.classList.toggle('active',active);
@@ -3523,11 +3580,18 @@ function printView(name){
   });
 });
 
-load();
-initPlanningSort();
-renderAll();
-// ensure first view is also marked as print-active
-document.getElementById('view-agenda').classList.add('print-active');
+  // Fechar dropdown ao clicar fora
+  document.addEventListener('click', (e) => {
+    const dd = document.getElementById('cronograma-dropdown');
+    if (dd && dd.classList.contains('open') && !dd.contains(e.target)) {
+      dd.classList.remove('open');
+    }
+  });
+
+  load();
+  initPlanningSort();
+  renderAll();
+  switchView('agenda');
 </script>
 </body>
 </html>
