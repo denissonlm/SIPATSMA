@@ -2042,11 +2042,6 @@ async function load(){
         state.events = evsRes.data.map(r => ({ id: r.id, ...r.data }));
         state.participants = ptsRes.data.map(r => ({ id: r.id, ...r.data }));
         state.actions = actRes.data.map(r => ({ id: r.id, ...r.data }));
-        // Migração: Converter eventId (string) para eventIds (array)
-        state.actions.forEach(a => {
-          if(a.eventId && !a.eventIds) { a.eventIds = [a.eventId]; delete a.eventId; }
-          if(!a.eventIds) a.eventIds = [];
-        });
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         renderAll();
     } else if(actRes.data.length > 0){
@@ -2066,7 +2061,7 @@ async function load(){
               who: t.responsible || '',
               when: t.date || '',
               done: !!t.done,
-              eventId: e.id
+              eventIds: [e.id]
             });
             migrated = true;
           }
@@ -2075,6 +2070,13 @@ async function load(){
         migrated = true;
       }
     });
+
+    // Migração global: Garantir que todas as ações usem eventIds (plural)
+    state.actions.forEach(a => {
+      if(a.eventId && !a.eventIds) { a.eventIds = [a.eventId]; delete a.eventId; }
+      if(!a.eventIds) a.eventIds = [];
+    });
+
     if(migrated) save();
     
     renderAll();
@@ -2799,7 +2801,7 @@ function renderEventDetail(){
         </div>
         ${e.description?`<div class="description">${escapeHTML(e.description)}</div>`:''}
         ${(()=>{
-          const eventActions = state.actions.filter(a => a.eventId === e.id);
+          const eventActions = state.actions.filter(a => (a.eventIds || []).includes(e.id));
           if(eventActions.length === 0) return '';
           const doneCount = eventActions.filter(t=>t.done).length;
           const total = eventActions.length;
@@ -2924,7 +2926,7 @@ function _openEventModalCore(data, isEdit){
     document.getElementById('event-description').value = data.description||'';
     photo = data.photo||null;
     // Carregar ações vinculadas a este evento para o modal
-    currentModalTasks = state.actions.filter(a => a.eventId === data.id).map(a => ({
+    currentModalTasks = state.actions.filter(a => (a.eventIds || []).includes(data.id)).map(a => ({
       id: a.id,
       text: a.what,
       responsible: a.who,
