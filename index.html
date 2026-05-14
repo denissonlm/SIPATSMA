@@ -1039,68 +1039,14 @@ tbody tr:hover{background:var(--gray-50)}
 .lock-btn.unlocked{background:#e8f5e9;border-color:#a5d6a7;color:#2e7d32}
 .lock-btn svg{width:14px;height:14px}
 
-/* ====== NAV DROPDOWN ====== */
-.nav-dropdown{position:relative;display:inline-block}
-.nav-dropdown-toggle{
-  background:none;border:none;padding:14px 16px;font-size:13px;font-weight:500;
-  color:var(--gray-600);cursor:pointer;border-bottom:3px solid transparent;
-  transition:var(--transition);white-space:nowrap;display:flex;align-items:center;gap:6px;
-}
-.nav-dropdown-toggle:hover{color:var(--black);background:var(--gray-50)}
-.nav-dropdown.active .nav-dropdown-toggle{color:var(--black);border-bottom-color:var(--red);font-weight:600}
-.nav-dropdown-content{
-  display:none;position:absolute;top:100%;left:0;background:var(--white);
-  min-width:180px;box-shadow:var(--shadow-lg);border:1px solid var(--gray-200);
-  border-radius:0 0 var(--radius) var(--radius);z-index:100;
-}
-.nav-dropdown:hover .nav-dropdown-content,
-.nav-dropdown.open .nav-dropdown-content{display:block}
-.nav-dropdown-content button{
-  width:100%;text-align:left;padding:10px 16px;border:none;background:none;
-  font-size:13px;color:var(--gray-600);cursor:pointer;display:flex;align-items:center;gap:8px;
-  border-bottom:1px solid var(--gray-50);
-}
-.nav-dropdown-content button:hover{background:var(--gray-50);color:var(--black)}
-.nav-dropdown-content button.active{color:var(--red);font-weight:600;background:var(--gray-50)}
-
 /* ====== PLANNING VIEW ====== */
-.planning-table-wrap{
-  background:var(--white);border:1px solid var(--gray-200);
-  border-radius:var(--radius-lg);overflow:hidden;
-  box-shadow:var(--shadow-sm);
-}
-.planning-table{width:100%;border-collapse:collapse;font-size:13px}
-.planning-table th{
-  background:var(--gray-50);padding:12px 16px;text-align:left;
-  font-weight:600;color:var(--gray-600);border-bottom:2px solid var(--gray-200);
-}
-.planning-table td{padding:14px 16px;border-bottom:1px solid var(--gray-100);vertical-align:middle}
-.planning-table tr:hover{background:var(--gray-50)}
-.planning-table tr.row-done{opacity:0.75}
-
+.planning-table-wrap{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:auto}
 .action-status-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:4px 12px;border-radius:99px;font-size:11px;font-weight:700;
-  text-transform:uppercase;letter-spacing:0.5px;
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;
 }
-.action-status-badge.done{background:#e8f5e9;color:#1b5e20;border:1px solid #c8e6c9}
-.action-status-badge.pending{background:#fff3e0;color:#e65100;border:1px solid #ffe0b2}
-
-.planning-search-input{
-  background:var(--gray-50);border:1px solid var(--gray-200);
-  padding:8px 12px;border-radius:var(--radius);font-size:13px;
-  width:280px;transition:var(--transition);
-}
-.planning-search-input:focus{background:var(--white);border-color:var(--red);box-shadow:0 0 0 3px rgba(185,28,28,0.1);outline:none}
-
-.resp-badge{
-  display:flex;align-items:center;gap:8px;font-weight:500;color:var(--gray-800);
-}
-.resp-avatar{
-  width:24px;height:24px;background:var(--gray-200);border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:10px;font-weight:bold;color:var(--gray-600);
-}
+.action-status-badge.done{background:#e8f5e9;color:#2e7d32}
+.action-status-badge.pending{background:var(--gray-200);color:var(--gray-700)}
 /* mini action chip shown in views */
 .action-chip{
   display:inline-block;
@@ -1391,35 +1337,30 @@ tbody tr:hover{background:var(--gray-50)}
 </header>
 
 <nav class="tabs no-print" id="tabs">
-  <div class="nav-dropdown" id="cronograma-dropdown">
-    <button class="nav-dropdown-toggle">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-      Cronograma
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;margin-left:2px"><path d="M6 9l6 6 6-6"/></svg>
-    </button>
-    <div class="nav-dropdown-content">
-      <button data-view="agenda">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-        Agenda
-      </button>
-      <button data-view="gantt">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h10M3 10h14M3 16h8M3 22h12"/></svg>
-        Gantt
-      </button>
-      <button data-view="calendar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
-        Calendário
-      </button>
-      <button data-view="timeline">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M5 6h14M5 12h14M5 18h14"/></svg>
-        Linha do tempo
-      </button>
-      <button data-view="list">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
-        Lista
-      </button>
-    </div>
-  </div>
+  <button data-view="agenda" class="active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    Agenda
+  </button>
+  <button data-view="gantt">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h10M3 10h14M3 16h8M3 22h12"/></svg>
+    Gantt
+  </button>
+  <button data-view="calendar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg>
+    Calendário
+  </button>
+  <button data-view="timeline">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M5 6h14M5 12h14M5 18h14"/></svg>
+    Linha do tempo
+  </button>
+  <button data-view="list">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+    Lista
+  </button>
+  <button data-view="event">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    Por evento
+  </button>
   <button data-view="participants">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
     Terceiros
@@ -1432,7 +1373,7 @@ tbody tr:hover{background:var(--gray-50)}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
     Exportar
   </button>
-  <button data-view="planning" class="active">
+  <button data-view="planning">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m-6 9l2 2 4-4"/></svg>
     Planejamento
   </button>
@@ -1455,7 +1396,7 @@ tbody tr:hover{background:var(--gray-50)}
   </div>
 
   <!-- ===== AGENDA ===== -->
-  <section id="view-agenda" class="view">
+  <section id="view-agenda" class="view active">
     <div class="view-header">
       <div>
         <div class="view-title">Agenda por dia</div>
@@ -1473,7 +1414,7 @@ tbody tr:hover{background:var(--gray-50)}
       </div>
     </div>
     <div id="stats-agenda" class="stats-row"></div>
-    <div id="agenda-grid" class="day-grid cascade hide-photos"></div>
+    <div id="agenda-grid" class="day-grid cascade"></div>
   </section>
 
   <!-- ===== GANTT ===== -->
@@ -1484,6 +1425,9 @@ tbody tr:hover{background:var(--gray-50)}
         <div class="view-subtitle">Eventos posicionados na faixa horária do dia.</div>
       </div>
       <div class="header-actions">
+        <button class="btn btn-outline" onclick="window.ganttSequential = !window.ganttSequential; renderGantt();">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg> Alternar Modo
+        </button>
         <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
       </div>
     </div>
@@ -1685,14 +1629,13 @@ tbody tr:hover{background:var(--gray-50)}
   </section>
 
   <!-- ===== PLANNING ===== -->
-  <section id="view-planning" class="view active">
+  <section id="view-planning" class="view">
     <div class="view-header">
       <div>
         <div class="view-title">Planejamento de ações</div>
         <div class="view-subtitle">Controle de tarefas para a realização do evento. Ações podem ser vinculadas a eventos do cronograma.</div>
       </div>
       <div class="header-actions">
-        <input type="text" id="planning-search" class="planning-search-input" placeholder="🔍 Pesquisa rápida..." oninput="renderPlanning()">
         <button class="btn btn-primary" onclick="requireAuth(openActionModal)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px"><path d="M12 5v14M5 12h14"/></svg>
           Nova ação
@@ -1705,10 +1648,11 @@ tbody tr:hover{background:var(--gray-50)}
         <thead>
           <tr>
             <th style="width:40px" class="no-print"></th>
-            <th style="width:120px" data-sort="done">Status <span class="sort-arrow">▲▼</span></th>
-            <th data-sort="what">O que / Evento <span class="sort-arrow">▲▼</span></th>
+            <th style="width:80px" data-sort="done">Status <span class="sort-arrow">▲▼</span></th>
+            <th data-sort="what">O que <span class="sort-arrow">▲▼</span></th>
             <th data-sort="who">Quem <span class="sort-arrow">▲▼</span></th>
             <th data-sort="when">Quando <span class="sort-arrow">▲▼</span></th>
+            <th>Evento vinculado</th>
             <th class="text-right no-print">Ações</th>
           </tr>
         </thead>
@@ -2219,26 +2163,10 @@ function renderPlanning(){
     return;
   }
 
-  const q = (document.getElementById('planning-search').value||'').toLowerCase();
-  let filtered = [...state.actions];
-  if(q){
-    filtered = filtered.filter(a => 
-      (a.what||'').toLowerCase().includes(q) || 
-      (a.who||'').toLowerCase().includes(q) ||
-      (a.eventIds||[]).some(eid => {
-        const ev = state.events.find(e => e.id === eid);
-        return ev && ev.title.toLowerCase().includes(q);
-      })
-    );
-  }
-
   // Ensure actions have an order property
-  filtered.forEach((a, i) => { if (a.order === undefined) a.order = i; });
+  state.actions.forEach((a, i) => { if (a.order === undefined) a.order = i; });
 
-  const sorted = filtered.sort((a,b)=>{
-    // Itens concluídos sempre para o final
-    if(a.done !== b.done) return a.done ? 1 : -1;
-    
+  const sorted = [...state.actions].sort((a,b)=>{
     const f = planningSort.field;
     if (f === 'order') {
       return planningSort.dir === 'asc' ? a.order - b.order : b.order - a.order;
@@ -2438,40 +2366,16 @@ function toggleTaskDone(eventId, taskId, done){
 /* ============================================================
    TAB NAVIGATION
    ============================================================ */
-document.querySelectorAll('nav.tabs button[data-view]').forEach(btn=>{
+document.querySelectorAll('nav.tabs button').forEach(btn=>{
   btn.addEventListener('click',()=>switchView(btn.dataset.view));
 });
-
-// Dropdown Cronograma Toggle
-const dropdownToggle = document.querySelector('.nav-dropdown-toggle');
-if(dropdownToggle){
-  dropdownToggle.addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('cronograma-dropdown').classList.toggle('open');
-  });
-}
-document.addEventListener('click', () => {
-  const dd = document.getElementById('cronograma-dropdown');
-  if(dd) dd.classList.remove('open');
-});
-
 function switchView(name){
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
   document.querySelectorAll('.view').forEach(v=>{
     const active = v.id==='view-'+name;
     v.classList.toggle('active',active);
     v.classList.toggle('print-active',active);
   });
-  
-  // Update button active state
-  document.querySelectorAll('nav.tabs button[data-view]').forEach(b=>{
-    b.classList.toggle('active', b.dataset.view === name);
-  });
-  
-  // Handle dropdown active state
-  const cronoViews = ['agenda', 'gantt', 'calendar', 'timeline', 'list'];
-  const isCrono = cronoViews.includes(name);
-  document.getElementById('cronograma-dropdown').classList.toggle('active', isCrono);
-
   renderAll();
 }
 
@@ -3622,8 +3526,8 @@ function printView(name){
 load();
 initPlanningSort();
 renderAll();
-// ensure planning is active on load
-switchView('planning');
+// ensure first view is also marked as print-active
+document.getElementById('view-agenda').classList.add('print-active');
 </script>
 </body>
 </html>
