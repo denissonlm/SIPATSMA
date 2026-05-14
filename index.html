@@ -1424,7 +1424,7 @@ tbody tr:hover{background:var(--gray-50)}
   </div>
 
   <!-- ===== AGENDA ===== -->
-  <section id="view-agenda" class="view active">
+  <section id="view-agenda" class="view">
     <div class="view-header">
       <div>
         <div class="view-title">Agenda por dia</div>
@@ -1654,7 +1654,7 @@ tbody tr:hover{background:var(--gray-50)}
   </section>
 
   <!-- ===== PLANNING ===== -->
-  <section id="view-planning" class="view">
+  <section id="view-planning" class="view active">
     <div class="view-header">
       <div>
         <div class="view-title">Planejamento de ações</div>
@@ -2410,7 +2410,7 @@ function toggleTaskDone(eventId, taskId, done){
 /* ============================================================
    TAB NAVIGATION
    ============================================================ */
-document.querySelectorAll('nav.tabs button').forEach(btn=>{
+document.querySelectorAll('nav.tabs button[data-view]').forEach(btn=>{
   btn.addEventListener('click',()=>switchView(btn.dataset.view));
 });
 function switchView(name){
@@ -3580,8 +3580,8 @@ function printView(name){
 load();
 initPlanningSort();
 renderAll();
-// ensure first view is also marked as print-active
-document.getElementById('view-agenda').classList.add('print-active');
+// ensure planning is active on load
+switchView('planning');
 </script>
 </body>
 </html>
