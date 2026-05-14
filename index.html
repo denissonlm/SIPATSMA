@@ -1064,14 +1064,80 @@ tbody tr:hover{background:var(--gray-50)}
 .lock-btn.unlocked{background:#e8f5e9;border-color:#a5d6a7;color:#2e7d32}
 .lock-btn svg{width:14px;height:14px}
 
-/* ====== PLANNING VIEW ====== */
-.planning-table-wrap{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);overflow:auto}
-.action-status-badge{
-  display:inline-flex;align-items:center;gap:5px;
-  padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;
+/* ====== PLANNING PREMIUM UI ====== */
+.planning-header-row{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:24px;background:var(--white);padding:24px;
+  border-radius:var(--radius-lg);border:1px solid var(--gray-200);box-shadow:var(--shadow-sm);
 }
-.action-status-badge.done{background:#e8f5e9;color:#2e7d32}
-.action-status-badge.pending{background:var(--gray-200);color:var(--gray-700)}
+.planning-search-box{
+  position:relative;width:320px;
+}
+.planning-search-box svg{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  width:16px;height:16px;color:var(--gray-400);
+}
+.planning-search-box input{
+  width:100%;padding:10px 14px 10px 38px;border-radius:99px;
+  border:1px solid var(--gray-200);background:var(--gray-50);
+  font-size:14px;transition:var(--transition);
+}
+.planning-search-box input:focus{
+  background:var(--white);border-color:var(--red);box-shadow:0 0 0 4px rgba(185,28,28,0.1);outline:none;
+}
+
+.planning-stats-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:32px;
+}
+.planning-stat-card{
+  background:var(--white);padding:24px;border-radius:var(--radius-lg);
+  border:1px solid var(--gray-200);display:flex;align-items:center;gap:20px;
+  transition:var(--transition);box-shadow:var(--shadow-sm);
+}
+.planning-stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--gray-300)}
+.stat-icon-circle{
+  width:52px;height:52px;border-radius:14px;display:flex;align-items:center;
+  justify-content:center;font-size:24px;
+}
+.stat-info .num{font-size:28px;font-weight:800;color:var(--black);line-height:1}
+.stat-info .tit{font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+
+.planning-stat-card.total .stat-icon-circle{background:#f3f4f6;color:var(--gray-700)}
+.planning-stat-card.done .stat-icon-circle{background:#e8f5e9;color:#2e7d32}
+.planning-stat-card.pending .stat-icon-circle{background:#fff3e0;color:#e65100}
+
+.action-card-list{display:flex;flex-direction:column;gap:12px}
+.action-card{
+  background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);
+  padding:16px 20px;display:grid;grid-template-columns:120px 1fr 200px 120px 60px;
+  align-items:center;gap:16px;transition:var(--transition);cursor:pointer;
+  position:relative;overflow:hidden;
+}
+.action-card:hover{border-color:var(--gray-400);box-shadow:var(--shadow-sm);transform:translateX(4px)}
+.action-card.card-done{background:var(--gray-50);opacity:0.8}
+.action-card.card-done::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:#2e7d32;
+}
+
+.action-status-pill{
+  font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+  padding:6px 12px;border-radius:6px;display:inline-flex;align-items:center;gap:6px;
+}
+.action-status-pill.done{background:#e8f5e9;color:#1b5e20}
+.action-status-pill.pending{background:#fff3e0;color:#e65100}
+
+.action-main-info .task-title{font-size:16px;font-weight:700;color:var(--black);margin-bottom:6px}
+.action-main-info .task-tags{display:flex;flex-wrap:wrap;gap:4px}
+
+.action-owner{display:flex;align-items:center;gap:10px}
+.owner-avatar{
+  width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg, var(--red), #8b1e15);
+  color:var(--white);display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;border:2px solid var(--white);box-shadow:0 2px 4px rgba(0,0,0,0.1);
+}
+.owner-name{font-size:13px;font-weight:600;color:var(--gray-800)}
+.action-date{font-size:13px;font-weight:500;color:var(--gray-600);display:flex;align-items:center;gap:6px}
+
 /* mini action chip shown in views */
 .action-chip{
   display:inline-block;
@@ -1664,35 +1730,25 @@ tbody tr:hover{background:var(--gray-50)}
 
   <!-- ===== PLANNING ===== -->
   <section id="view-planning" class="view">
-    <div class="view-header">
+    <div class="planning-header-row">
       <div>
-        <div class="view-title">Planejamento de ações</div>
-        <div class="view-subtitle">Controle de tarefas para a realização do evento. Ações podem ser vinculadas a eventos do cronograma.</div>
+        <div class="view-title">📋 Planejamento Estratégico</div>
+        <div class="view-subtitle">Gestão de ações e metas para a SIPATSMA 2026.</div>
       </div>
-      <div class="header-actions">
+      <div style="display:flex;gap:16px;align-items:center">
+        <div class="planning-search-box no-print">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="text" id="planning-search" placeholder="Pesquisar ações ou responsáveis..." oninput="renderPlanning()">
+        </div>
         <button class="btn btn-primary" onclick="requireAuth(openActionModal)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px"><path d="M12 5v14M5 12h14"/></svg>
           Nova ação
         </button>
       </div>
     </div>
-    <div id="planning-stats" class="stats-row"></div>
-    <div class="planning-table-wrap">
-      <table id="planning-table" class="planning-table">
-        <thead>
-          <tr>
-            <th style="width:40px" class="no-print"></th>
-            <th style="width:80px" data-sort="done">Status <span class="sort-arrow">▲▼</span></th>
-            <th data-sort="what">O que <span class="sort-arrow">▲▼</span></th>
-            <th data-sort="who">Quem <span class="sort-arrow">▲▼</span></th>
-            <th data-sort="when">Quando <span class="sort-arrow">▲▼</span></th>
-            <th>Evento vinculado</th>
-            <th class="text-right no-print">Ações</th>
-          </tr>
-        </thead>
-        <tbody id="planning-body"></tbody>
-      </table>
-    </div>
+
+    <div id="planning-stats" class="planning-stats-row"></div>
+    <div id="planning-body" class="action-card-list"></div>
   </section>
 
 </main>
@@ -2091,12 +2147,12 @@ async function load(){
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         renderAll();
     }
+    
     // Migração: Se existirem tasks dentro dos eventos, converter para ações vinculadas
     let migrated = false;
     state.events.forEach(e => {
       if(e.tasks && e.tasks.length > 0){
         e.tasks.forEach(t => {
-          // Se essa task ainda não existe como ação vinculada
           if(!state.actions.some(a => a.id === t.id)){
             state.actions.push({
               id: t.id || uid(),
@@ -2109,12 +2165,11 @@ async function load(){
             migrated = true;
           }
         });
-        delete e.tasks; // Remove do objeto do evento para não duplicar
+        delete e.tasks;
         migrated = true;
       }
     });
 
-    // Migração global: Garantir que todas as ações usem eventIds (plural)
     state.actions.forEach(a => {
       if(a.eventId && !a.eventIds) { a.eventIds = [a.eventId]; delete a.eventId; }
       if(!a.eventIds) a.eventIds = [];
@@ -2166,7 +2221,6 @@ function toggleActionsView(btn){
   document.querySelectorAll('.view-actions-toggle').forEach(b=>{
     b.classList.toggle('active', showActionsInViews);
     const label = showActionsInViews ? ' Ocultar ações' : ' Ações';
-    // Update only the text node, preserving the SVG
     for (let node of b.childNodes) {
       if (node.nodeType === 3 && node.textContent.trim().length > 1) {
         node.textContent = label;
@@ -2191,75 +2245,103 @@ function actionsChipsHTML(eventId){
    RENDER: PLANNING
    ============================================================ */
 function renderPlanning(){
-  const stats = document.getElementById('planning-stats');
   const total = state.actions.length;
   const done = state.actions.filter(a=>a.done).length;
   const pending = total - done;
-  stats.innerHTML = `
-    <div class="stat-card"><div class="stat-label">Total de ações</div><div class="stat-value">${total}</div></div>
-    <div class="stat-card accent"><div class="stat-label">Concluídas</div><div class="stat-value">${done}</div></div>
-    <div class="stat-card"><div class="stat-label">Pendentes</div><div class="stat-value">${pending}</div></div>
-  `;
-  const tbody = document.getElementById('planning-body');
+  
+  const statsRoot = document.getElementById('planning-stats');
+  if(statsRoot){
+    statsRoot.innerHTML = `
+      <div class="planning-stat-card total">
+        <div class="stat-icon-circle">📊</div>
+        <div class="stat-info">
+          <div class="num">${total}</div>
+          <div class="tit">Total de Ações</div>
+        </div>
+      </div>
+      <div class="planning-stat-card done">
+        <div class="stat-icon-circle">✅</div>
+        <div class="stat-info">
+          <div class="num">${done}</div>
+          <div class="tit">Concluídas</div>
+        </div>
+      </div>
+      <div class="planning-stat-card pending">
+        <div class="stat-icon-circle">⏳</div>
+        <div class="stat-info">
+          <div class="num">${pending}</div>
+          <div class="tit">Pendentes</div>
+        </div>
+      </div>
+    `;
+  }
+
+  const q = (document.getElementById('planning-search').value||'').toLowerCase();
+  
+  // Filtragem e Ordenação robusta
+  const filtered = state.actions.filter(a => 
+    (a.what||'').toLowerCase().includes(q) || 
+    (a.who||'').toLowerCase().includes(q)
+  );
+
+  const sorted = [...filtered].sort((a,b) => {
+    if (a.done !== b.done) return a.done ? 1 : -1;
+    return (a.order || 0) - (b.order || 0);
+  });
+
+  const root = document.getElementById('planning-body');
   if(!total){
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--gray-500)">Nenhuma ação cadastrada. Clique em "Nova ação" para começar.</td></tr>`;
+    root.innerHTML = `<div style="text-align:center;padding:100px 20px;background:var(--white);border-radius:var(--radius);border:1px dashed var(--gray-300)">
+      <div style="font-size:48px;margin-bottom:16px">✨</div>
+      <h3 style="color:var(--gray-800);margin-bottom:8px">Tudo limpo por aqui!</h3>
+      <p style="color:var(--gray-500)">Nenhuma ação estratégica cadastrada para este projeto.</p>
+    </div>`;
     return;
   }
 
-  // Ensure actions have an order property
-  state.actions.forEach((a, i) => { if (a.order === undefined) a.order = i; });
-
-  const sorted = [...state.actions].sort((a,b)=>{
-    const f = planningSort.field;
-    if (f === 'order') {
-      return planningSort.dir === 'asc' ? a.order - b.order : b.order - a.order;
-    }
-    const av = (a[f]||'').toString().toLowerCase();
-    const bv = (b[f]||'').toString().toLowerCase();
-    if(av<bv) return planningSort.dir==='asc'?-1:1;
-    if(av>bv) return planningSort.dir==='asc'?1:-1;
-    return a.order - b.order;
-  });
-
-  tbody.innerHTML = sorted.map(a=>{
+  root.innerHTML = sorted.map(a=>{
     const evIds = a.eventIds || [];
     const evLabels = evIds.map(eid => {
         const ev = state.events.find(e => e.id === eid);
-        return ev ? `<span class="tag" style="margin-right:2px">${escapeHTML(ev.title)}</span>` : '';
-    }).join('') || '<span class="muted">—</span>';
-    const dateLabel = a.when ? fmtTaskDate(a.when) : '<span class="muted">—</span>';
-    return `<tr data-id="${a.id}" onclick="requireAuth(()=>openActionModal('${a.id}'))" style="cursor:pointer">
-      <td class="no-print" onclick="event.stopPropagation()">
-        <div class="drag-handle">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px">
-            <circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/>
-            <circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/>
-          </svg>
-        </div>
-      </td>
-      <td style="text-align:center">
-        <input type="checkbox" ${a.done?'checked':''} onclick="event.stopPropagation();toggleActionDone('${a.id}',this.checked)" style="width:18px;height:18px;accent-color:var(--red);cursor:pointer">
-      </td>
-      <td><strong style="${a.done?'text-decoration:line-through;color:var(--gray-500)':''};">${escapeHTML(a.what)}</strong></td>
-      <td>${escapeHTML(a.who||'')}</td>
-      <td>${dateLabel}</td>
-      <td><div style="display:flex;flex-wrap:wrap;gap:2px">${evLabels}</div></td>
-      <td class="text-right no-print">
-        <button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();requireAuth(()=>openActionModal('${a.id}'))">Editar</button>
-      </td>
-    </tr>`;
+        return ev ? `<span class="tag" style="background:var(--gray-100);color:var(--gray-600);font-size:10px">${escapeHTML(ev.title)}</span>` : '';
+    }).join('') || '';
+    
+    const initials = (a.who||'??').split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+
+    return `<div class="action-card ${a.done?'card-done':''}" onclick="requireAuth(()=>openActionModal('${a.id}'))">
+      <div style="display:flex;align-items:center;gap:12px">
+        <input type="checkbox" ${a.done?'checked':''} 
+          onclick="event.stopPropagation(); requireAuth(()=>toggleActionDone('${a.id}', this.checked))" 
+          style="width:20px;height:20px;cursor:pointer;accent-color:var(--red)">
+        <span class="action-status-pill ${a.done?'done':'pending'}">
+          ${a.done?'Concluída':'Pendente'}
+        </span>
+      </div>
+      <div class="action-main-info">
+        <div class="task-title" style="${a.done?'text-decoration:line-through;color:var(--gray-500)':''}">${escapeHTML(a.what)}</div>
+        <div class="task-tags">${evLabels}</div>
+      </div>
+      <div class="action-owner">
+        <div class="owner-avatar">${initials}</div>
+        <div class="owner-name">${escapeHTML(a.who||'Sem responsável')}</div>
+      </div>
+      <div class="action-date">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        ${a.when ? fmtTaskDate(a.when) : '—'}
+      </div>
+      <div class="text-right">
+        <button class="btn btn-icon btn-ghost" onclick="event.stopPropagation(); requireAuth(()=>openActionModal('${a.id}'))">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+      </div>
+    </div>`;
   }).join('');
 
-  // Initialize Sortable
   if (planningSortable) planningSortable.destroy();
-  planningSortable = new Sortable(tbody, {
-    handle: '.drag-handle',
-    animation: 150,
+  planningSortable = new Sortable(root, {
+    animation: 250,
     ghostClass: 'sortable-ghost',
-    chosenClass: 'sortable-chosen',
-    onEnd: function() {
-      updatePlanningOrder();
-    }
+    onEnd: function() { updatePlanningOrder(); }
   });
 }
 
