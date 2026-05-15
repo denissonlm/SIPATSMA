@@ -163,6 +163,47 @@ main{flex:1;padding:24px 32px 80px;overflow-y:auto;background:var(--gray-50)}
 .btn-sm{padding:4px 8px;font-size:12px}
 .btn-icon{padding:6px;width:30px;height:30px;justify-content:center}
 
+/* ====== FAROL BUTTONS ====== */
+.row-actions-farol {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+}
+.btn-farol {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  color: white;
+  padding: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.btn-farol:hover {
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+.btn-farol svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.5;
+}
+.btn-farol.edit { background-color: #3498db; }
+.btn-farol.edit:hover { background-color: #2980b9; }
+.btn-farol.duplicate { background-color: #f39c12; }
+.btn-farol.duplicate:hover { background-color: #e67e22; }
+.btn-farol.delete { background-color: #e74c3c; }
+.btn-farol.delete:hover { background-color: #c0392b; }
+
+
 /* ====== CARDS ====== */
 .card{
   background:var(--white);
@@ -900,7 +941,7 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
 }
 .capacity-row input[type=checkbox]{accent-color:var(--red);width:16px;height:16px;cursor:pointer}
 
-/* ====== FORM SECTIONS / CHECKLIST / TERCEIROS PICKER ====== */
+/* ====== FORM SECTIONS / CHECKLIST / PARCEIROS PICKER ====== */
 .form-section{margin-top:18px;padding-top:16px;border-top:1px solid var(--gray-200)}
 .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
 .section-title{font-size:12px;font-weight:600;color:var(--gray-700);text-transform:uppercase;letter-spacing:.5px}
@@ -1216,7 +1257,7 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
 .premium-stat-card .stat-info .tit{font-size:10px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
 .action-card{
   background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);
-  padding:16px 20px;display:grid;grid-template-columns:120px 1fr 200px 120px 60px;
+  padding:16px 20px;display:grid;grid-template-columns:120px 1fr 200px 140px 110px;
   align-items:center;gap:16px;transition:var(--transition);cursor:pointer;
   position:relative;overflow:hidden;
 }
@@ -1243,7 +1284,7 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
   font-size:11px;font-weight:800;border:2px solid var(--white);box-shadow:0 2px 4px rgba(0,0,0,0.1);
 }
 .planning-sort-bar{
-  display:grid;grid-template-columns:120px 1fr 200px 120px 60px;
+  display:grid;grid-template-columns:120px 1fr 200px 140px 110px;
   gap:16px;padding:12px 20px;margin-bottom:8px;
   background:var(--gray-50);border-radius:var(--radius);
   border:1px solid var(--gray-200);
@@ -1583,11 +1624,7 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
   </div>
   <button data-view="participants">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-    Terceiros
-  </button>
-  <button data-view="manage">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    Gerenciar
+    Parceiros
   </button>
   <button data-view="export">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
@@ -1743,15 +1780,15 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
     <div id="event-detail-container"></div>
   </section>
 
-  <!-- ===== PARTICIPANTS (TERCEIROS) ===== -->
+  <!-- ===== PARTICIPANTS (PARCEIROS) ===== -->
   <section id="view-participants" class="view">
     <div class="view-header">
       <div>
-        <div class="view-title">Terceiros</div>
+        <div class="view-title">Parceiros</div>
         <div class="view-subtitle">Cadastro de pessoas externas que vão participar. Todos os campos são opcionais.</div>
       </div>
       <div class="header-actions">
-        <button class="btn btn-primary" onclick="requireAuth(openParticipantModal)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Adicionar terceiro</button>
+        <button class="btn btn-primary" onclick="requireAuth(openParticipantModal)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Adicionar parceiro</button>
         <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
       </div>
     </div>
@@ -1817,7 +1854,7 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
       <div class="export-card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 8l4 4 4-4M8 16h8"/></svg>
         <h4>Excel (.xlsx)</h4>
-        <p>Planilha com abas: Eventos, Terceiros, Inscrições, Resumo por dia e Checklist.</p>
+        <p>Planilha com abas: Eventos, Parceiros, Inscrições, Resumo por dia e Checklist.</p>
         <button class="btn btn-primary" onclick="exportXLSX()">Baixar XLSX</button>
       </div>
       <div class="export-card">
@@ -2059,9 +2096,9 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
 
         <div class="form-section">
           <div class="section-header">
-            <div class="section-title">Terceiros inscritos neste evento</div>
+            <div class="section-title">Parceiros inscritos neste evento</div>
           </div>
-          <div class="section-hint">Selecione na lista — use a aba "Terceiros" para cadastrar novos.</div>
+          <div class="section-hint">Selecione na lista — use a aba "Parceiros" para cadastrar novos.</div>
           <div id="event-participants-list" class="picker-list"></div>
         </div>
 
@@ -2073,7 +2110,7 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
               Adicionar tarefa
             </button>
           </div>
-          <div class="section-hint">Marque a caixa quando a tarefa estiver concluída. O responsável tem autocomplete a partir dos terceiros cadastrados e nomes já usados.</div>
+          <div class="section-hint">Marque a caixa quando a tarefa estiver concluída. O responsável tem autocomplete a partir dos parceiros cadastrados e nomes já usados.</div>
           <div id="event-tasks-list" class="tasks-list"></div>
           <datalist id="responsibles-names-datalist"></datalist>
           <datalist id="sectors-datalist"></datalist>
@@ -2093,11 +2130,11 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
   </div>
 </div>
 
-<!-- ====== PARTICIPANT (TERCEIRO) MODAL ====== -->
+<!-- ====== PARTICIPANT (PARCEIRO) MODAL ====== -->
 <div id="participant-modal" class="modal-backdrop hidden">
   <div class="modal">
     <div class="modal-header">
-      <h3 id="participant-modal-title">Novo terceiro</h3>
+      <h3 id="participant-modal-title">Novo parceiro</h3>
       <button class="btn btn-ghost btn-icon" onclick="closeParticipantModal()" aria-label="Fechar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
@@ -2151,8 +2188,8 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
         <button class="print-option" onclick="printView('timeline')"><strong>Linha do tempo</strong><small>Sequência cronológica vertical</small></button>
         <button class="print-option" onclick="printView('list')"><strong>Lista detalhada</strong><small>Tabela com todos os eventos</small></button>
         <button class="print-option" onclick="printView('event')"><strong>Por evento</strong><small>Detalhe do evento selecionado</small></button>
-        <button class="print-option" onclick="printView('manage')"><strong>Gerenciar eventos</strong><small>Tabela completa do cronograma</small></button>
-        <button class="print-option" onclick="printView('participants')"><strong>Terceiros</strong><small>Lista de pessoas cadastradas</small></button>
+
+        <button class="print-option" onclick="printView('participants')"><strong>Parceiros</strong><small>Lista de pessoas cadastradas</small></button>
         <button class="print-option" onclick="printView('planning')"><strong>Planejamento de Ações</strong><small>Tabela de controle de tarefas</small></button>
       </div>
     </div>
@@ -2491,9 +2528,15 @@ function renderPlanning(){
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
         ${a.when ? fmtTaskDate(a.when) : '—'}
       </div>
-      <div class="text-right">
-        <button class="btn btn-icon btn-ghost" onclick="event.stopPropagation(); requireAuth(()=>openActionModal('${a.id}'))">
+      <div class="row-actions-farol">
+        <button class="btn-farol edit" onclick="event.stopPropagation(); requireAuth(()=>openActionModal('${a.id}'))" title="Editar ação">
            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="btn-farol duplicate" onclick="event.stopPropagation(); requireAuth(()=>duplicateAction('${a.id}'))" title="Duplicar ação">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+        <button class="btn-farol delete" onclick="event.stopPropagation(); requireAuth(()=>deleteAction('${a.id}'))" title="Excluir ação">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
         </button>
       </div>
     </div>`;
@@ -2615,6 +2658,25 @@ function saveAction(){
   renderPlanning();
   closeActionModal();
 }
+function duplicateAction(id){
+  const orig = state.actions.find(a=>a.id===id);
+  if(!orig) return;
+  const clone = JSON.parse(JSON.stringify(orig));
+  clone.id = uid();
+  clone.what = (clone.what||'') + ' (cópia)';
+  clone.done = false;
+  state.actions.push(clone);
+  save();
+  renderPlanning();
+  openActionModal(clone.id);
+}
+async function deleteAction(id){
+  if(!confirm('Excluir esta ação permanentemente?')) return;
+  state.actions = state.actions.filter(a=>a.id!==id);
+  save();
+  try { await supabaseClient.from('actions').delete().eq('id',id); } catch(e){}
+  renderPlanning();
+}
 async function deleteCurrentAction(){
   const id = document.getElementById('action-id').value;
   if(!id) return;
@@ -2725,7 +2787,7 @@ function renderAgenda(){
       <div class="stat-icon" style="background:#f0fdf4;color:#16a34a">👥</div>
       <div class="stat-info">
         <div class="num">${state.participants.length}</div>
-        <div class="tit">Terceiros</div>
+        <div class="tit">Parceiros</div>
       </div>
     </div>
   `;
@@ -3075,8 +3137,16 @@ function renderList(){
       <td>${escapeHTML(e.responsibleName||'')}</td>
       <td>${escapeHTML(e.responsibleSector||'')}</td>
       <td class="text-right">
-        <div class="row-actions">
-          <button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();openEventModal('${e.id}')">Editar</button>
+        <div class="row-actions-farol">
+          <button class="btn-farol edit" onclick="event.stopPropagation();openEventModal('${e.id}')" title="Editar evento">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="btn-farol duplicate" onclick="event.stopPropagation();requireAuth(()=>duplicateEvent('${e.id}'))" title="Duplicar evento">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+          <button class="btn-farol delete" onclick="event.stopPropagation();requireAuth(()=>deleteEvent('${e.id}'))" title="Excluir evento">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </button>
         </div>
       </td>
     </tr>`;
@@ -3124,7 +3194,7 @@ document.getElementById('event-select').addEventListener('change',e=>{
 function renderEventDetail(){
   const root = document.getElementById('event-detail-container');
   if(!currentEventDetailId){
-    root.innerHTML = `<div class="empty-state"><h3>Nenhum evento selecionado.</h3><p>Adicione eventos pela aba Gerenciar.</p></div>`;
+    root.innerHTML = `<div class="empty-state"><h3>Nenhum evento selecionado.</h3><p>Adicione ou selecione eventos pela aba Lista ou Agenda.</p></div>`;
     return;
   }
   const e = state.events.find(x=>x.id===currentEventDetailId);
@@ -3175,9 +3245,9 @@ function renderEventDetail(){
           </div>`;
         })()}
         <div class="enrolled-list">
-          <h4>Terceiros inscritos (${enrolled.length})</h4>
+          <h4>Parceiros inscritos (${enrolled.length})</h4>
           ${enrolled.length===0
-            ? '<p class="muted" style="font-size:12px">Nenhum terceiro inscrito neste evento ainda.</p>'
+            ? '<p class="muted" style="font-size:12px">Nenhum parceiro inscrito neste evento ainda.</p>'
             : `<ul>${enrolled.map(p=>{
                 const contact = [p.phone, p.email].filter(Boolean).map(escapeHTML).join(' · ');
                 return `<li><span class="emp-name">${escapeHTML(p.name||'(sem nome)')}</span><span class="emp-sector">${contact}</span></li>`;
@@ -3201,7 +3271,7 @@ function renderParticipants(){
   let parts = [...state.participants];
   if(q) parts = parts.filter(p=>[p.name,p.phone,p.email].some(v=>(v||'').toLowerCase().includes(q)));
   if(parts.length===0){
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-500)">Nenhum terceiro cadastrado.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-500)">Nenhum parceiro cadastrado.</td></tr>`;
     return;
   }
   tbody.innerHTML = parts.map(p=>{
@@ -3219,34 +3289,7 @@ function renderParticipants(){
   }).join('');
 }
 
-/* ============================================================
-   RENDER: MANAGE
-   ============================================================ */
-function renderManage(){
-  const tbody = document.getElementById('manage-body');
-  if(state.events.length===0){
-    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--gray-500)">Nenhum evento cadastrado. Clique em "Novo evento" para começar.</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = sortedEvents().map(e=>`
-    <tr onclick="openEventModal('${e.id}')">
-      <td>${fmtDayShort(e.date)}</td>
-      <td>${escapeHTML(e.startTime)} – ${escapeHTML(e.endTime)}</td>
-      <td><strong>${escapeHTML(e.title)}</strong></td>
-      <td><span class="tag type-${e.type}">${TYPE_LABELS[e.type]||'—'}</span></td>
-      <td>${escapeHTML(e.location||'')}</td>
-      <td>${escapeHTML(e.responsibleName||'')}</td>
-      <td>${escapeHTML(e.responsibleSector||'')}</td>
-      <td>${e.capacity==null?'<span class="muted">Ilimitada</span>':e.capacity}</td>
-      <td class="text-right">
-        <div class="row-actions">
-          <button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();openEventModal('${e.id}')">Editar</button>
-          <button class="btn btn-sm btn-ghost" onclick="event.stopPropagation();duplicateEvent('${e.id}')" title="Duplicar evento">Duplicar</button>
-          <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();deleteEvent('${e.id}')">Excluir</button>
-        </div>
-      </td>
-    </tr>`).join('');
-}
+
 
 /* ============================================================
    EVENT MODAL
@@ -3297,7 +3340,7 @@ function _openEventModalCore(data, isEdit){
 
   setPhotoPreview(photo);
   onCapacityToggle();
-  renderEventTerceirosPicker(isEdit && data ? data.id : null);
+  renderEventParceirosPicker(isEdit && data ? data.id : null);
   refreshTasksUI();
   refreshResponsiblesDatalist();
 
@@ -3354,11 +3397,11 @@ function duplicateCurrentEvent(){
   _openEventModalCore(clone, false);
 }
 
-/* ====== Terceiros picker (within event modal) ====== */
-function renderEventTerceirosPicker(eventId){
+/* ====== Parceiros picker (within event modal) ====== */
+function renderEventParceirosPicker(eventId){
   const container = document.getElementById('event-participants-list');
   if(state.participants.length===0){
-    container.innerHTML = '<div class="picker-empty">Nenhum terceiro cadastrado ainda. Cadastre na aba "Terceiros" para poder inscrevê-los aqui.</div>';
+    container.innerHTML = '<div class="picker-empty">Nenhum parceiro cadastrado ainda. Cadastre na aba "Parceiros" para poder inscrevê-los aqui.</div>';
     return;
   }
   const sorted = [...state.participants].sort((a,b)=>(a.name||'').localeCompare(b.name||'','pt-BR'));
@@ -3402,7 +3445,7 @@ function removeTaskRow(i){
   refreshTasksUI();
 }
 function refreshResponsiblesDatalist(){
-  // Pool of names: event responsibles + task responsibles + terceiros names
+  // Pool of names: event responsibles + task responsibles + parceiros names
   const names = new Set();
   state.events.forEach(e=>{
     if(e.responsibleName) names.add(e.responsibleName.trim());
@@ -3560,7 +3603,7 @@ function deleteCurrentEvent(){
   if(id) deleteEvent(id);
 }
 async function deleteEvent(id){
-  if(!confirm('Excluir este evento? Os terceiros inscritos serão desinscritos.')) return;
+  if(!confirm('Excluir este evento? Os parceiros inscritos serão desinscritos.')) return;
   state.events = state.events.filter(e=>e.id!==id);
   state.participants.forEach(p=>{
     if(p.enrolledEvents) p.enrolledEvents = p.enrolledEvents.filter(x=>x!==id);
@@ -3582,7 +3625,7 @@ function openParticipantModal(id){
   if(id){
     const p = state.participants.find(x=>x.id===id);
     if(!p) return;
-    document.getElementById('participant-modal-title').textContent = 'Editar terceiro';
+    document.getElementById('participant-modal-title').textContent = 'Editar parceiro';
     document.getElementById('participant-id').value = p.id;
     document.getElementById('p-name').value = p.name||'';
     document.getElementById('p-phone').value = p.phone||'';
@@ -3590,7 +3633,7 @@ function openParticipantModal(id){
     enrolled = p.enrolledEvents||[];
     document.getElementById('participant-delete-btn').style.display = '';
   }else{
-    document.getElementById('participant-modal-title').textContent = 'Novo terceiro';
+    document.getElementById('participant-modal-title').textContent = 'Novo parceiro';
     document.getElementById('participant-id').value = '';
     document.getElementById('participant-delete-btn').style.display = 'none';
   }
@@ -3633,7 +3676,7 @@ function saveParticipant(){
 async function deleteCurrentParticipant(){
   const id = document.getElementById('participant-id').value;
   if(!id) return;
-  if(!confirm('Excluir este terceiro?')) return;
+  if(!confirm('Excluir este parceiro?')) return;
   state.participants = state.participants.filter(p=>p.id!==id);
   save();
   try { await supabaseClient.from('participants').delete().eq('id', id); } catch(e){}
@@ -3665,7 +3708,7 @@ function exportXLSX(){
   ws1['!cols'] = [{wch:12},{wch:14},{wch:8},{wch:8},{wch:10},{wch:36},{wch:16},{wch:24},{wch:22},{wch:18},{wch:11},{wch:50}];
   XLSX.utils.book_append_sheet(wb, ws1, 'Eventos');
 
-  // Sheet 2: Terceiros
+  // Sheet 2: Parceiros
   const pHeaders = ['Nome','Telefone','E-mail','Qtd. eventos inscritos'];
   const pRows = state.participants.map(p=>[
     p.name||'', p.phone||'', p.email||'',
@@ -3673,10 +3716,10 @@ function exportXLSX(){
   ]);
   const ws2 = XLSX.utils.aoa_to_sheet([pHeaders,...pRows]);
   ws2['!cols'] = [{wch:30},{wch:18},{wch:30},{wch:22}];
-  XLSX.utils.book_append_sheet(wb, ws2, 'Terceiros');
+  XLSX.utils.book_append_sheet(wb, ws2, 'Parceiros');
 
   // Sheet 3: Inscrições
-  const iHeaders = ['Terceiro','Telefone','E-mail','Evento','Data','Início','Fim','Tipo','Local'];
+  const iHeaders = ['Parceiro','Telefone','E-mail','Evento','Data','Início','Fim','Tipo','Local'];
   const iRows = [];
   state.participants.forEach(p=>{
     (p.enrolledEvents||[]).forEach(eid=>{
@@ -3756,7 +3799,7 @@ function importJSON(ev){
     try{
       const data = JSON.parse(e.target.result);
       if(!data.events || !Array.isArray(data.events)) throw new Error('Formato inválido');
-      if(!confirm(`Importar ${data.events.length} evento(s) e ${(data.participants||[]).length} terceiro(s)? Os dados atuais serão substituídos.`)) return;
+      if(!confirm(`Importar ${data.events.length} evento(s) e ${(data.participants||[]).length} parceiro(s)? Os dados atuais serão substituídos.`)) return;
       state = {events:data.events, participants:data.participants||[], actions:data.actions||[]};
       save();
       renderAll();
@@ -3767,7 +3810,7 @@ function importJSON(ev){
   ev.target.value = '';
 }
 async function clearAll(){
-  if(!confirm('Tem certeza? Isso apagará TODOS os eventos e terceiros cadastrados.')) return;
+  if(!confirm('Tem certeza? Isso apagará TODOS os eventos e parceiros cadastrados.')) return;
   if(!confirm('Confirmar novamente: esta ação não pode ser desfeita.')) return;
   state = {events:[], participants:[], actions:[]};
   save();
@@ -3795,7 +3838,6 @@ function renderAll(){
   renderEventSelect();
   renderEventDetail();
   renderParticipants();
-  renderManage();
   renderPlanning();
 }
 
@@ -3822,8 +3864,8 @@ const VIEW_NAMES = {
   'view-timeline':'Linha do tempo',
   'view-list':'Lista detalhada de eventos',
   'view-event':'Detalhe do evento',
-  'view-participants':'Terceiros cadastrados',
-  'view-manage':'Gerenciar eventos',
+  'view-participants':'Parceiros cadastrados',
+
   'view-export':'Exportação',
 };
 
