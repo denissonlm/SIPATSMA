@@ -1440,57 +1440,100 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
     box-shadow:none;border:1px solid #999;
   }
   
-  /* Layout da Agenda - Compactado (5 dias lado a lado numa única folha) */
+  /* Layout da Agenda - Versão Limpa para Impressão */
   .day-grid {
     display: grid !important;
     grid-template-columns: repeat(5, 1fr) !important;
-    gap: 4px !important;
+    gap: 12px !important;
   }
   .day-column {
-    display: flex !important;
-    flex-direction: column !important;
-    margin-bottom: 0 !important;
-    border: 1px solid #999 !important;
-    background: #fff !important;
-    border-radius: 2px !important;
+    border: none !important;
+    background: none !important;
+    border-radius: 0 !important;
   }
   .day-header {
-    background: #111 !important;
-    color: #fff !important;
-    border-radius: 1px 1px 0 0 !important;
-    margin-bottom: 2px !important;
-    padding: 2px 4px !important;
+    background: none !important;
+    color: #111 !important;
+    padding: 0 0 6px 0 !important;
+    margin-bottom: 12px !important;
+    border-bottom: 1.5px solid #111 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
+  .day-header .day-name { font-size: 11pt !important; font-weight: 800 !important; text-transform: uppercase !important; letter-spacing: 0.5px !important; }
+  .day-header .day-date { font-size: 8pt !important; color: #555 !important; font-weight: 500 !important; }
+  .day-header .day-count { display: none !important; }
+
   .day-events {
     display: flex !important;
     flex-direction: column !important;
-    gap: 2px !important;
-    padding: 0 2px 2px 2px !important;
+    gap: 10px !important;
+    padding: 0 !important;
   }
-  .event-photo-banner { display: none !important; } /* Imagens removidas */
+  .event-photo-banner { display: none !important; }
   .event-card {
-    width: 100% !important;
-    break-inside: avoid;
-    page-break-inside: avoid;
-    border: 1px solid #aaa !important;
-    background: #fff !important;
-    padding: 3px 4px !important;
+    border: none !important;
+    border-left: 2px solid #ddd !important;
+    background: transparent !important;
+    padding: 2px 0 2px 10px !important;
     margin: 0 !important;
-    line-height: 1.1 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    display: block !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
-  /* Coloca o horário e título na mesma linha para economizar espaço! */
-  .event-card .ec-time { display: inline !important; font-size: 7.5pt !important; font-weight: bold !important; margin-right: 4px !important; }
-  .event-card .ec-title { display: inline !important; font-size: 8pt !important; margin-bottom: 0 !important; }
-  .event-card .ec-meta { font-size: 6.5pt !important; gap: 3px !important; margin-top: 2px !important; display: block !important; }
-  .day-header .day-name { font-size: 9pt !important; }
-  .day-header .day-date { font-size: 7pt !important; }
+  /* Cores sutis na lateral para identificar o tipo */
+  .event-card.type-abertura, .event-card.type-encerramento, .event-card.type-premiacao { border-left-color: #c0392b !important; }
+  .event-card.type-palestra { border-left-color: #e74c3c !important; }
+  .event-card.type-dialogo_seguranca { border-left-color: #8b1e15 !important; }
+  .event-card.type-acao_saude { border-left-color: #d35a4d !important; }
+  .event-card.type-workshop { border-left-color: #2c2c2c !important; }
+  
+  .event-card .ec-title {
+    font-size: 9.5pt !important;
+    font-weight: 700 !important;
+    color: #000 !important;
+    margin-bottom: 4px !important;
+    display: block !important;
+    height: auto !important;
+    line-height: 1.2 !important;
+  }
+  .event-card .ec-tags { display: none !important; } 
+  .event-card .ec-footer {
+    border-top: none !important;
+    padding-top: 0 !important;
+    margin-top: 4px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 2px !important;
+  }
+  .event-card .ec-owner { display: none !important; } 
+  .event-card .ec-info-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    align-items: flex-start !important;
+  }
+  .event-card .ec-info-item {
+    font-size: 7.5pt !important;
+    color: #444 !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+  }
+  .event-card .ec-info-item svg { width: 10px !important; height: 10px !important; }
+  .event-card .ec-info-item[style*="color:var(--red)"] { color: #c0392b !important; font-weight: 700 !important; }
 
-  .stats-row{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px}
-  .stat-card{flex:1; min-width:100px; padding:10px; border:1px solid #ccc}
-  .stat-card .stat-value{font-size:16pt}
-  .stat-card .stat-label{font-size:10pt}
+  #stats-agenda { display: none !important; }
+
+  .stats-row{display:none !important}
+  .stat-card{display:none !important}
 
   /* Outros cabeçalhos escuros para impressão */
   .cal-header-cell,.event-detail-header,.timeline-day span{
