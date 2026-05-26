@@ -3141,11 +3141,20 @@ function renderList(){
   if(q) evs = evs.filter(e=>[e.title,e.location,e.responsibleName,e.responsibleSector,e.description].some(v=>(v||'').toLowerCase().includes(q)));
   evs.sort((a,b)=>{
     const f = listSort.field;
+    if (f === 'date') {
+      if (a.date !== b.date) {
+        return listSort.dir === 'asc'
+          ? a.date.localeCompare(b.date)
+          : b.date.localeCompare(a.date);
+      }
+      return (a.startTime || '').localeCompare(b.startTime || '');
+    }
     const av = (a[f]||'').toString().toLowerCase();
     const bv = (b[f]||'').toString().toLowerCase();
     if(av<bv) return listSort.dir==='asc'?-1:1;
     if(av>bv) return listSort.dir==='asc'?1:-1;
-    return 0;
+    if (a.date !== b.date) return a.date.localeCompare(b.date);
+    return (a.startTime || '').localeCompare(b.startTime || '');
   });
   const table = document.getElementById('list-table');
   table.querySelectorAll('tbody').forEach(b => b.remove());
