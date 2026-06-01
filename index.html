@@ -771,7 +771,8 @@ textarea{min-height:80px;resize:vertical;font-family:inherit}
   background:var(--white);
   border:1px solid var(--gray-200);
   border-radius:var(--radius-lg);
-  overflow:auto;
+  overflow-x:hidden;
+  overflow-y:auto;
   box-shadow:var(--shadow-sm);
 }
 table{
@@ -1438,6 +1439,7 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
   /* ----- element-specific tweaks ----- */
   .card,.gantt-container,.calendar,.event-detail,.table-wrap{
     box-shadow:none;border:1px solid #999;
+    overflow:visible !important;
   }
   
   /* Layout da Agenda - Versão Limpa para Impressão */
@@ -1716,7 +1718,7 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
         <button class="btn btn-outline" onclick="document.getElementById('agenda-grid').classList.toggle('hide-photos')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg> Alternar Imagens
         </button>
-        <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
+        <button class="btn" onclick="openPrintModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
       </div>
     </div>
     <div id="stats-agenda" class="premium-stats-row"></div>
@@ -1734,7 +1736,7 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
         <button class="btn btn-outline" onclick="window.ganttSequential = !window.ganttSequential; renderGantt();">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg> Alternar Modo
         </button>
-        <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
+        <button class="btn" onclick="openPrintModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
       </div>
     </div>
     <div id="gantt-legend" class="legend"></div>
@@ -1755,7 +1757,7 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
         <div class="view-subtitle">Grade horária estilo agenda. Cada bloco mostra um evento.</div>
       </div>
       <div class="header-actions">
-        <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
+        <button class="btn" onclick="openPrintModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
       </div>
     </div>
     <div class="calendar"><div id="calendar-grid" class="cal-grid"></div></div>
@@ -1772,7 +1774,7 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
         <button class="btn btn-outline" onclick="document.getElementById('timeline').classList.toggle('layout-horizontal');">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18"/></svg> Alternar Modo
         </button>
-        <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
+        <button class="btn" onclick="openPrintModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
       </div>
     </div>
     <div id="timeline" class="timeline"></div>
@@ -1786,7 +1788,7 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
         <div class="view-subtitle">Tabela completa, filtrável e ordenável.</div>
       </div>
       <div class="header-actions">
-        <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
+        <button class="btn" onclick="openPrintModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
       </div>
     </div>
     <div class="list-controls">
@@ -1806,7 +1808,8 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
             <th data-sort="location">Local <span class="sort-arrow">▲▼</span></th>
             <th data-sort="responsibleName">Responsável <span class="sort-arrow">▲▼</span></th>
             <th data-sort="responsibleSector">Setor <span class="sort-arrow">▲▼</span></th>
-            <th class="text-right">Ações</th>
+            <th data-sort="isExternal" class="no-print">Filiais/Tirreno <span class="sort-arrow">▲▼</span></th>
+            <th class="text-right no-print">Ações</th>
           </tr>
         </thead>
         <tbody id="list-body"></tbody>
@@ -1823,7 +1826,7 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
       </div>
       <div class="header-actions">
         <select id="event-select" style="min-width:280px"></select>
-        <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
+        <button class="btn" onclick="openPrintModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
       </div>
     </div>
     <div id="event-detail-container"></div>
@@ -1838,7 +1841,7 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
       </div>
       <div class="header-actions">
         <button class="btn btn-primary" onclick="requireAuth(openParticipantModal)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Adicionar parceiro</button>
-        <button class="btn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
+        <button class="btn" onclick="openPrintModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>Imprimir</button>
       </div>
     </div>
     <div class="list-controls">
@@ -2104,6 +2107,10 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
             <label class="field-label" for="event-end">Fim <span class="required">*</span></label>
             <input type="time" id="event-end" required>
           </div>
+          <div class="form-row span-full" style="display:flex; align-items:center; gap:8px; margin-top:8px;">
+            <input type="checkbox" id="event-external" style="accent-color:var(--red);cursor:pointer;width:16px;height:16px;">
+            <label class="field-label" for="event-external" style="margin:0;cursor:pointer;">Filiais / Tirreno (Evento Externo/Online)</label>
+          </div>
           <div class="form-row span-2">
             <label class="field-label" for="event-location">Local</label>
             <input type="text" id="event-location" maxlength="120" placeholder="Ex: Auditório / Refeitório / Pátio">
@@ -2229,6 +2236,20 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
       </button>
     </div>
     <div class="modal-body">
+      <div style="background:var(--gray-50); padding:12px; border-radius:6px; margin-bottom:14px; border:1px solid var(--gray-200);">
+        <p style="margin-bottom:8px; font-weight:600; font-size:14px;">Quais eventos deseja incluir na impressão?</p>
+        <label style="display:block; margin-bottom:4px; font-size:13px; cursor:pointer;">
+          <input type="radio" name="print_filter" value="all" checked style="accent-color:var(--red);" onchange="togglePrintSelectedEvents()"> Todos os eventos
+        </label>
+        <label style="display:block; margin-bottom:4px; font-size:13px; cursor:pointer;">
+          <input type="radio" name="print_filter" value="external" style="accent-color:var(--red);" onchange="togglePrintSelectedEvents()"> Apenas eventos externos (Filiais / Tirreno)
+        </label>
+        <label style="display:block; margin-bottom:4px; font-size:13px; cursor:pointer;">
+          <input type="radio" name="print_filter" value="selected" style="accent-color:var(--red);" onchange="togglePrintSelectedEvents()"> Selecionar eventos específicos...
+        </label>
+        <div id="print-selected-events-container" style="display:none; margin-top:8px; max-height:150px; overflow-y:auto; border:1px solid var(--gray-200); background:#fff; padding:8px; border-radius:4px;">
+        </div>
+      </div>
       <p class="muted" style="margin-bottom:14px;font-size:13px">Selecione a visualização que deseja imprimir ou salvar como PDF. A janela de impressão do navegador será aberta em seguida.</p>
       <div class="print-options">
         <button class="print-option" onclick="printView('agenda')"><strong>Agenda por dia</strong><small>Cards agrupados de segunda a sexta</small></button>
@@ -3161,7 +3182,7 @@ function renderList(){
 
   if(evs.length===0){
     const tb = document.createElement('tbody');
-    tb.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--gray-500)">Nenhum evento encontrado.</td></tr>`;
+    tb.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:24px;color:var(--gray-500)">Nenhum evento encontrado.</td></tr>`;
     table.appendChild(tb);
     return;
   }
@@ -3180,7 +3201,7 @@ function renderList(){
         currentTbodyHtml = '';
       }
       currentTbodyHtml += `<tr class="date-separator" style="background:var(--gray-100); color:var(--black); font-weight:700; font-size:13px; border-top:2px solid var(--gray-300);">
-        <td colspan="9" style="padding:10px 16px;">📅 ${fmtDayLong(e.date)}</td>
+        <td colspan="10" style="padding:10px 16px;">📅 ${fmtDayLong(e.date)}</td>
       </tr>`;
       lastDate = e.date;
     }
@@ -3194,7 +3215,10 @@ function renderList(){
       <td>${escapeHTML(e.location||'')}</td>
       <td>${escapeHTML(e.responsibleName||'')}</td>
       <td>${escapeHTML(e.responsibleSector||'')}</td>
-      <td class="text-right">
+      <td style="text-align:center" class="no-print">
+        <input type="checkbox" style="accent-color:var(--red);cursor:pointer;width:16px;height:16px" onclick="event.stopPropagation(); toggleEventExternal('${e.id}', this.checked)" ${e.isExternal ? 'checked' : ''} title="Marcar como evento para Filiais / Tirreno">
+      </td>
+      <td class="text-right no-print">
         <div class="row-actions-farol">
           <button class="btn-farol edit" onclick="event.stopPropagation();openEventModal('${e.id}')" title="Editar evento">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -3374,6 +3398,7 @@ function _openEventModalCore(data, isEdit){
     document.getElementById('event-resp-name').value = data.responsibleName||'';
     document.getElementById('event-resp-sector').value = data.responsibleSector||'';
     document.getElementById('event-description').value = data.description||'';
+    document.getElementById('event-external').checked = !!data.isExternal;
     photo = data.photo||null;
     // Carregar ações vinculadas a este evento para o modal
     currentModalTasks = state.actions.filter(a => (a.eventIds || []).includes(data.id)).map(a => ({
@@ -3391,6 +3416,7 @@ function _openEventModalCore(data, isEdit){
     document.getElementById('event-date').value = DAYS[0].iso;
     document.getElementById('event-type').value = 'palestra';
     document.getElementById('event-capacity-unlimited').checked = false;
+    document.getElementById('event-external').checked = false;
     currentModalTasks = [];
     document.getElementById('event-delete-btn').style.display = 'none';
     document.getElementById('event-duplicate-btn').style.display = 'none';
@@ -3449,6 +3475,7 @@ function duplicateCurrentEvent(){
     responsibleName: document.getElementById('event-resp-name').value,
     responsibleSector: document.getElementById('event-resp-sector').value,
     description: document.getElementById('event-description').value,
+    isExternal: document.getElementById('event-external').checked,
     photo: previewImg ? previewImg.src : null,
   };
   // As tarefas são copiadas para o currentModalTasks no _openEventModalCore ao abrir com clone
@@ -3596,6 +3623,7 @@ function saveEvent(){
     responsibleName: document.getElementById('event-resp-name').value.trim(),
     responsibleSector: document.getElementById('event-resp-sector').value.trim(),
     description: document.getElementById('event-description').value.trim(),
+    isExternal: document.getElementById('event-external').checked,
     photo: previewImg ? previewImg.src : null,
   };
   if(timeToMinutes(data.endTime) <= timeToMinutes(data.startTime)){
@@ -3655,6 +3683,14 @@ function saveEvent(){
   }
   closeEventModal();
   renderAll();
+}
+function toggleEventExternal(id, isChecked) {
+  const e = state.events.find(x=>x.id===id);
+  if(e) {
+    e.isExternal = isChecked;
+    save();
+    try { supabaseClient.from('events').update({ is_external: isChecked }).eq('id', id); } catch(err){}
+  }
 }
 function deleteCurrentEvent(){
   const id = document.getElementById('event-id').value;
@@ -3942,13 +3978,51 @@ function updatePrintCover(){
 }
 window.addEventListener('beforeprint', updatePrintCover);
 
-function openPrintModal(){document.getElementById('print-modal').classList.remove('hidden')}
+function togglePrintSelectedEvents() {
+  const isSel = document.querySelector('input[name="print_filter"]:checked').value === 'selected';
+  document.getElementById('print-selected-events-container').style.display = isSel ? 'block' : 'none';
+}
+
+function openPrintModal(){
+  const container = document.getElementById('print-selected-events-container');
+  container.innerHTML = state.events.map(e => `
+    <label style="display:block; margin-bottom:4px; font-size:12px; cursor:pointer;">
+      <input type="checkbox" class="print-event-checkbox" value="${e.id}" style="accent-color:var(--red);"> 
+      <strong>${fmtDayShort(e.date)} ${e.startTime}</strong> - ${escapeHTML(e.title)}
+    </label>
+  `).join('');
+  document.getElementById('print-modal').classList.remove('hidden');
+}
 function closePrintModal(){document.getElementById('print-modal').classList.add('hidden')}
 function printView(name){
+  const filterType = document.querySelector('input[name="print_filter"]:checked').value;
+  let filteredEvents = null;
+  
+  if(filterType === 'external') {
+    filteredEvents = state.events.filter(e => e.isExternal);
+  } else if (filterType === 'selected') {
+    const selectedIds = [...document.querySelectorAll('.print-event-checkbox:checked')].map(c => c.value);
+    filteredEvents = state.events.filter(e => selectedIds.includes(e.id));
+  }
+
   closePrintModal();
+  
+  if (filteredEvents) {
+    window._originalEventsBackup = state.events;
+    state.events = filteredEvents;
+  }
+
   switchView(name);
-  // give the browser a moment to apply the view switch (and Event-detail to render) before printing
-  setTimeout(()=>{ updatePrintCover(); window.print(); }, 250);
+  
+  setTimeout(()=>{ 
+    updatePrintCover(); 
+    window.print(); 
+    if (window._originalEventsBackup) {
+      state.events = window._originalEventsBackup;
+      window._originalEventsBackup = null;
+      renderAll();
+    }
+  }, 250);
 }
 
 /* ============================================================
