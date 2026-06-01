@@ -2115,6 +2115,10 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
             <label class="field-label" for="event-location">Local</label>
             <input type="text" id="event-location" maxlength="120" placeholder="Ex: Auditório / Refeitório / Pátio">
           </div>
+          <div class="form-row span-full">
+            <label class="field-label" for="event-meeting-link">Link da Reunião (Online) <span style="font-weight:normal;color:var(--gray-500)">(opcional)</span></label>
+            <input type="url" id="event-meeting-link" maxlength="500" placeholder="Ex: https://teams.microsoft.com/...">
+          </div>
           <div class="form-row">
             <label class="field-label" for="event-capacity">Capacidade</label>
             <div class="capacity-row">
@@ -2913,6 +2917,11 @@ function renderAgenda(){
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                         <span>${escapeHTML(e.location)}</span>
                       </div>`:''}
+                    ${e.meetingLink?`
+                      <a href="${escapeHTML(e.meetingLink)}" target="_blank" onclick="event.stopPropagation()" class="ec-info-item no-print" style="color:var(--red); text-decoration:none;" title="Acessar Reunião Online">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                        <span>Reunião Online</span>
+                      </a>`:''}
                   </div>
                 </div>
                 ${actionsChipsHTML(e.id)}
@@ -2979,7 +2988,10 @@ function renderGantt(){
 
       let rowContent = `<div class="gantt-row" style="grid-template-columns:${trackCols}">
         <div class="gantt-label" style="font-size:11px; display:flex; flex-direction:column; justify-content:center; gap:2px; padding:4px 8px">
-          <strong style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis" title="${escapeHTML(e.title)}">${escapeHTML(e.title)}</strong>
+          <strong style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis" title="${escapeHTML(e.title)}">
+            ${e.meetingLink ? `<a href="${escapeHTML(e.meetingLink)}" target="_blank" onclick="event.stopPropagation()" class="no-print" style="color:inherit;text-decoration:none;" title="Acessar Reunião"><svg style="width:12px;height:12px;vertical-align:middle;margin-right:2px;color:var(--red)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg></a>` : ''}
+            ${escapeHTML(e.title)}
+          </strong>
           <span class="gantt-date" style="margin:0">${d.short} ${escapeHTML(e.startTime)}</span>
         </div>
         <div class="gantt-track" style="display:flex; padding:0; background:transparent;">`;
@@ -3094,7 +3106,10 @@ function renderCalendar(){
         const heightPct = Math.max(10, ((eM-sM)/60)*100); /* mínimo visual */
         cellHTML += `<div class="cal-event type-${e.type}" style="top:${topPct}%;height:calc(${heightPct}% - 2px)" onclick="openEventModal('${e.id}')" title="${escapeHTML(e.title)}">
           <div class="ce-time">${escapeHTML(e.startTime)}–${escapeHTML(e.endTime)}</div>
-          <div>${escapeHTML(e.title)}</div>
+          <div>
+            ${e.meetingLink ? `<a href="${escapeHTML(e.meetingLink)}" target="_blank" onclick="event.stopPropagation()" class="no-print" style="color:inherit;text-decoration:none;" title="Acessar Reunião"><svg style="width:12px;height:12px;vertical-align:middle;margin-right:2px;color:var(--red)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg></a>` : ''}
+            ${escapeHTML(e.title)}
+          </div>
         </div>`;
       });
       html += `<div class="cal-day-cell">${cellHTML}</div>`;
@@ -3132,6 +3147,7 @@ function renderTimeline(){
         <div class="tc-meta">
           <span class="tag type-${e.type}">${TYPE_LABELS[e.type]||'—'}</span>
           ${e.location?` · 📍 ${escapeHTML(e.location)}`:''}
+          ${e.meetingLink?` · <a href="${escapeHTML(e.meetingLink)}" target="_blank" onclick="event.stopPropagation()" class="no-print" style="color:var(--red);text-decoration:none;" title="Acessar Reunião"><svg style="width:12px;height:12px;vertical-align:middle;margin-bottom:2px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg> Link</a>`:''}
           ${e.responsibleName?` · 👤 ${escapeHTML(e.responsibleName)}`:''}
         </div>
       </div>
@@ -3212,7 +3228,10 @@ function renderList(){
       <td>${escapeHTML(e.endTime)}</td>
       <td><strong>${escapeHTML(e.title)}</strong></td>
       <td><span class="tag type-${e.type}">${TYPE_LABELS[e.type]||'—'}</span></td>
-      <td>${escapeHTML(e.location||'')}</td>
+      <td>
+        ${escapeHTML(e.location||'')}
+        ${e.meetingLink ? `<a href="${escapeHTML(e.meetingLink)}" target="_blank" onclick="event.stopPropagation()" class="no-print" style="color:var(--red);margin-left:4px;" title="Acessar Reunião"><svg style="width:14px;height:14px;vertical-align:middle;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg></a>` : ''}
+      </td>
       <td>${escapeHTML(e.responsibleName||'')}</td>
       <td>${escapeHTML(e.responsibleSector||'')}</td>
       <td style="text-align:center" class="no-print">
@@ -3294,7 +3313,10 @@ function renderEventDetail(){
       </div>
       <div class="event-detail-body">
         <div class="detail-grid">
-          <div class="detail-field"><div class="df-label">Local</div><div class="df-value ${e.location?'':'empty'}">${escapeHTML(e.location||'não informado')}</div></div>
+          <div class="detail-field"><div class="df-label">Local</div><div class="df-value ${e.location?'':'empty'}">
+            ${escapeHTML(e.location||'não informado')}
+            ${e.meetingLink ? `<br><a href="${escapeHTML(e.meetingLink)}" class="no-print" target="_blank" style="display:inline-flex;align-items:center;gap:4px;color:var(--red);text-decoration:none;margin-top:4px;font-size:12px;font-weight:600;"><svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg> Acessar Reunião Online</a>` : ''}
+          </div></div>
           <div class="detail-field"><div class="df-label">Responsável</div><div class="df-value ${e.responsibleName?'':'empty'}">${escapeHTML(e.responsibleName||'não informado')}</div></div>
           <div class="detail-field"><div class="df-label">Setor</div><div class="df-value ${e.responsibleSector?'':'empty'}">${escapeHTML(e.responsibleSector||'não informado')}</div></div>
           <div class="detail-field"><div class="df-label">Capacidade</div><div class="df-value">${e.capacity==null?'Ilimitada':e.capacity+' vagas'}</div></div>
@@ -3393,6 +3415,7 @@ function _openEventModalCore(data, isEdit){
     document.getElementById('event-start').value = data.startTime||'';
     document.getElementById('event-end').value = data.endTime||'';
     document.getElementById('event-location').value = data.location||'';
+    document.getElementById('event-meeting-link').value = data.meetingLink||'';
     document.getElementById('event-capacity').value = (data.capacity==null?'':data.capacity);
     document.getElementById('event-capacity-unlimited').checked = (data.capacity==null);
     document.getElementById('event-resp-name').value = data.responsibleName||'';
@@ -3413,6 +3436,7 @@ function _openEventModalCore(data, isEdit){
   }else{
     document.getElementById('event-modal-title').textContent = 'Novo evento';
     document.getElementById('event-id').value = '';
+    document.getElementById('event-meeting-link').value = '';
     document.getElementById('event-date').value = DAYS[0].iso;
     document.getElementById('event-type').value = 'palestra';
     document.getElementById('event-capacity-unlimited').checked = false;
@@ -3471,6 +3495,7 @@ function duplicateCurrentEvent(){
     startTime: document.getElementById('event-start').value,
     endTime: document.getElementById('event-end').value,
     location: document.getElementById('event-location').value,
+    meetingLink: document.getElementById('event-meeting-link').value,
     capacity: unlim || isNaN(capRaw) ? null : capRaw,
     responsibleName: document.getElementById('event-resp-name').value,
     responsibleSector: document.getElementById('event-resp-sector').value,
@@ -3619,6 +3644,7 @@ function saveEvent(){
     startTime: document.getElementById('event-start').value,
     endTime: document.getElementById('event-end').value,
     location: document.getElementById('event-location').value.trim(),
+    meetingLink: document.getElementById('event-meeting-link').value.trim(),
     capacity: unlim || isNaN(capRaw) ? null : capRaw,
     responsibleName: document.getElementById('event-resp-name').value.trim(),
     responsibleSector: document.getElementById('event-resp-sector').value.trim(),
