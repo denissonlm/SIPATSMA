@@ -1671,6 +1671,10 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
         Por evento
       </button>
+      <button data-view="links" onclick="this.closest('.nav-dropdown').classList.remove('open'); switchView('links')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+        Relação de Links
+      </button>
     </div>
   </div>
   <button data-view="participants">
@@ -1890,6 +1894,48 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
           </tr>
         </thead>
         <tbody id="manage-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== LINKS ===== -->
+  <section id="view-links" class="view">
+    <style>
+      @media print {
+        .print-links-title {
+          display: block !important;
+          font-size: 16pt;
+          color: var(--red);
+          margin-bottom: 16px;
+          border-bottom: 2px solid var(--gray-200);
+          padding-bottom: 8px;
+        }
+      }
+    </style>
+    <div class="view-header no-print">
+      <div>
+        <div class="view-title">Relação de Links</div>
+        <div class="view-subtitle">Lista de eventos com seus respectivos links.</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" onclick="openPrintModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z"/></svg>
+          Imprimir
+        </button>
+      </div>
+    </div>
+    <div class="print-links-title" style="display:none; font-weight:700;">Relação de Eventos com Links</div>
+    <div class="table-wrap" style="background:#fff;border-radius:var(--radius-lg);padding:16px;">
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr style="border-bottom:2px solid var(--gray-200);text-align:left;">
+            <th style="padding:12px;color:var(--gray-600);font-size:12px;text-transform:uppercase;">Data e Horário</th>
+            <th style="padding:12px;color:var(--gray-600);font-size:12px;text-transform:uppercase;">Evento</th>
+            <th style="padding:12px;color:var(--gray-600);font-size:12px;text-transform:uppercase;">Responsável</th>
+            <th style="padding:12px;color:var(--gray-600);font-size:12px;text-transform:uppercase;">Link da Reunião</th>
+          </tr>
+        </thead>
+        <tbody id="links-body"></tbody>
       </table>
     </div>
   </section>
@@ -2262,6 +2308,7 @@ tbody tr:hover{background:#fdf3f1;transform:scale(1.002);z-index:2;position:rela
         <button class="print-option" onclick="printView('timeline')"><strong>Linha do tempo</strong><small>Sequência cronológica vertical</small></button>
         <button class="print-option" onclick="printView('list')"><strong>Lista detalhada</strong><small>Tabela com todos os eventos</small></button>
         <button class="print-option" onclick="printView('event')"><strong>Por evento</strong><small>Detalhe do evento selecionado</small></button>
+        <button class="print-option" onclick="printView('links')"><strong>Relação de Links</strong><small>Eventos com links por extenso</small></button>
 
         <button class="print-option" onclick="printView('participants')"><strong>Parceiros</strong><small>Lista de pessoas cadastradas</small></button>
         <button class="print-option" onclick="printView('planning')"><strong>Planejamento de Ações</strong><small>Tabela de controle de tarefas</small></button>
@@ -2800,7 +2847,7 @@ function switchView(name){
   // Atualizar visual do dropdown "Cronograma"
   const dd = document.getElementById('cronograma-dropdown');
   if(dd){
-    const subViews = ['agenda','gantt','calendar','timeline','list','event'];
+    const subViews = ['agenda','gantt','calendar','timeline','list','event','links'];
     if(subViews.includes(name)){
       dd.classList.add('active');
     } else {
@@ -3272,6 +3319,39 @@ document.querySelectorAll('#list-table th[data-sort]').forEach(th=>{
 document.getElementById('list-search').addEventListener('input',renderList);
 document.getElementById('list-filter-day').addEventListener('change',renderList);
 document.getElementById('list-filter-type').addEventListener('change',renderList);
+
+function renderLinks(){
+  const tbody = document.getElementById('links-body');
+  if(!tbody) return;
+  const evsWithLinks = [...state.events]
+    .filter(e => e.meetingLink && e.meetingLink.trim() !== '')
+    .sort((a,b)=>{
+      if (a.date !== b.date) return a.date.localeCompare(b.date);
+      return (a.startTime || '').localeCompare(b.startTime || '');
+    });
+
+  if(evsWithLinks.length === 0){
+    tbody.innerHTML = '<tr><td colspan="4" style="padding:24px;text-align:center;color:var(--gray-500);">Nenhum evento com link cadastrado.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = evsWithLinks.map(e => `
+    <tr style="border-bottom:1px solid var(--gray-200);">
+      <td style="padding:12px;vertical-align:top;white-space:nowrap;">
+        <strong>${fmtDayShort(e.date)}</strong><br>
+        <span style="color:var(--gray-500);font-size:12px">${e.startTime} - ${e.endTime}</span>
+      </td>
+      <td style="padding:12px;vertical-align:top;">
+        <strong style="color:var(--gray-800);">${escapeHTML(e.title)}</strong><br>
+        <span style="display:inline-block;margin-top:4px;padding:2px 6px;border-radius:4px;font-size:10px;background:var(--gray-100);color:var(--gray-600);">${TYPE_LABELS[e.type]||e.type}</span>
+      </td>
+      <td style="padding:12px;vertical-align:top;color:var(--gray-700);">${escapeHTML(e.responsibleName||'—')}</td>
+      <td style="padding:12px;vertical-align:top;">
+        <a href="${e.meetingLink}" target="_blank" style="color:var(--red);text-decoration:underline;word-break:break-all;font-size:13px">${escapeHTML(e.meetingLink)}</a>
+      </td>
+    </tr>
+  `).join('');
+}
 
 /* ============================================================
    RENDER: PER EVENT
@@ -3955,6 +4035,7 @@ function renderAll(){
   renderTimeline();
   renderListFilters();
   renderList();
+  renderLinks();
   renderEventSelect();
   renderEventDetail();
   renderParticipants();
@@ -3985,6 +4066,7 @@ const VIEW_NAMES = {
   'view-list':'Lista detalhada de eventos',
   'view-event':'Detalhe do evento',
   'view-participants':'Parceiros cadastrados',
+  'view-links':'Relação de Links',
 
   'view-export':'Exportação',
 };
