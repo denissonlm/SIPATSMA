@@ -2386,6 +2386,7 @@ function checkPassword(){
 function closePasswordModal(){
   document.getElementById('password-modal').classList.add('hidden');
   _pendingCallback = null;
+  renderAll();
 }
 function toggleLock(){
   if(_authUnlocked){
@@ -3537,13 +3538,15 @@ function _openEventModalCore(data, isEdit){
 }
 
 function openEventModal(id){
-  if(id){
-    const e = state.events.find(x=>x.id===id);
-    if(!e) return;
-    _openEventModalCore(e, true);
-  }else{
-    _openEventModalCore(null, false);
-  }
+  requireAuth(() => {
+    if(id){
+      const e = state.events.find(x=>x.id===id);
+      if(!e) return;
+      _openEventModalCore(e, true);
+    }else{
+      _openEventModalCore(null, false);
+    }
+  });
 }
 
 function duplicateEvent(id){
@@ -3791,27 +3794,32 @@ function saveEvent(){
   renderAll();
 }
 function toggleEventExternal(id, isChecked) {
-  const e = state.events.find(x=>x.id===id);
-  if(e) {
-    e.isExternal = isChecked;
-    save();
-    try { supabaseClient.from('events').update({ is_external: isChecked }).eq('id', id); } catch(err){}
-  }
+  requireAuth(() => {
+    const e = state.events.find(x=>x.id===id);
+    if(e) {
+      e.isExternal = isChecked;
+      save();
+      try { supabaseClient.from('events').update({ is_external: isChecked }).eq('id', id); } catch(err){}
+      renderAll();
+    }
+  });
 }
 function deleteCurrentEvent(){
   const id = document.getElementById('event-id').value;
   if(id) deleteEvent(id);
 }
 async function deleteEvent(id){
-  if(!confirm('Excluir este evento? Os parceiros inscritos serão desinscritos.')) return;
-  state.events = state.events.filter(e=>e.id!==id);
-  state.participants.forEach(p=>{
-    if(p.enrolledEvents) p.enrolledEvents = p.enrolledEvents.filter(x=>x!==id);
+  requireAuth(async () => {
+    if(!confirm('Excluir este evento? Os parceiros inscritos serão desinscritos.')) return;
+    state.events = state.events.filter(e=>e.id!==id);
+    state.participants.forEach(p=>{
+      if(p.enrolledEvents) p.enrolledEvents = p.enrolledEvents.filter(x=>x!==id);
+    });
+    save();
+    try { await supabaseClient.from('events').delete().eq('id', id); } catch(e){}
+    closeEventModal();
+    renderAll();
   });
-  save();
-  try { await supabaseClient.from('events').delete().eq('id', id); } catch(e){}
-  closeEventModal();
-  renderAll();
 }
 
 /* ============================================================
@@ -3993,36 +4001,40 @@ function exportJSON(){
   URL.revokeObjectURL(url);
 }
 function importJSON(ev){
-  const file = ev.target.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e=>{
-    try{
-      const data = JSON.parse(e.target.result);
-      if(!data.events || !Array.isArray(data.events)) throw new Error('Formato inválido');
-      if(!confirm(`Importar ${data.events.length} evento(s) e ${(data.participants||[]).length} parceiro(s)? Os dados atuais serão substituídos.`)) return;
-      state = {events:data.events, participants:data.participants||[], actions:data.actions||[]};
-      save();
-      renderAll();
-      alert('Importação concluída.');
-    }catch(err){alert('Erro ao ler o arquivo: '+err.message)}
-  };
-  reader.readAsText(file);
-  ev.target.value = '';
+  requireAuth(() => {
+    const file = ev.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = e=>{
+      try{
+        const data = JSON.parse(e.target.result);
+        if(!data.events || !Array.isArray(data.events)) throw new Error('Formato inválido');
+        if(!confirm(`Importar ${data.events.length} evento(s) e ${(data.participants||[]).length} parceiro(s)? Os dados atuais serão substituídos.`)) return;
+        state = {events:data.events, participants:data.participants||[], actions:data.actions||[]};
+        save();
+        renderAll();
+        alert('Importação concluída.');
+      }catch(err){alert('Erro ao ler o arquivo: '+err.message)}
+    };
+    reader.readAsText(file);
+    ev.target.value = '';
+  });
 }
-async function clearAll(){
-  if(!confirm('Tem certeza? Isso apagará TODOS os eventos e parceiros cadastrados.')) return;
-  if(!confirm('Confirmar novamente: esta ação não pode ser desfeita.')) return;
-  state = {events:[], participants:[], actions:[]};
-  save();
-  try {
-    const evs = await supabaseClient.from('events').select('id');
-    if(evs.data && evs.data.length) await supabaseClient.from('events').delete().in('id', evs.data.map(d=>d.id));
-    const pts = await supabaseClient.from('participants').select('id');
-    if(pts.data && pts.data.length) await supabaseClient.from('participants').delete().in('id', pts.data.map(d=>d.id));
-    const acts = await supabaseClient.from('actions').select('id');
-    if(acts.data && acts.data.length) await supabaseClient.from('actions').delete().in('id', acts.data.map(d=>d.id));
-  }catch(e){}
-  renderAll();
+function clearAll(){
+  requireAuth(async () => {
+    if(!confirm('Tem certeza? Isso apagará TODOS os eventos e parceiros cadastrados.')) return;
+    if(!confirm('Confirmar novamente: esta ação não pode ser desfeita.')) return;
+    state = {events:[], participants:[], actions:[]};
+    save();
+    try {
+      const evs = await supabaseClient.from('events').select('id');
+      if(evs.data && evs.data.length) await supabaseClient.from('events').delete().in('id', evs.data.map(d=>d.id));
+      const pts = await supabaseClient.from('participants').select('id');
+      if(pts.data && pts.data.length) await supabaseClient.from('participants').delete().in('id', pts.data.map(d=>d.id));
+      const acts = await supabaseClient.from('actions').select('id');
+      if(acts.data && acts.data.length) await supabaseClient.from('actions').delete().in('id', acts.data.map(d=>d.id));
+    }catch(e){}
+    renderAll();
+  });
 }
 
 /* ============================================================
